@@ -1,7 +1,8 @@
 """Core data model for PMAI projects.
 
-A project is a collection of tables.  Menu tables describe navigation and
-field tables describe modal / database models.  Rows may optionally point to
+A project is a collection of tables.  Menu tables describe navigation, field
+tables describe modal / database models, and component tables describe reusable
+UI pieces (buttons, tables, and headings).  Rows may optionally point to
 another table, which is what the diagram arrows represent.
 """
 
@@ -15,9 +16,58 @@ from typing import Any
 
 MENU = "menu"
 FIELDS = "fields"
-TABLE_KINDS = (MENU, FIELDS)
+COMPONENTS = "components"
+TABLE_KINDS = (MENU, FIELDS, COMPONENTS)
 
 MENU_ROW = "Menu"
+
+COMPONENT_TYPES: tuple[str, ...] = (
+    "Button",
+    "TextBox",
+    "Text Area",
+    "Table",
+    "Tabs",
+    "H1",
+    "H2",
+    "H3",
+    "H4",
+    "H5",
+    "H6",
+)
+
+_COMPONENT_TYPE_LOOKUP = {value.lower(): value for value in COMPONENT_TYPES}
+_COMPONENT_TYPE_ALIASES = {
+    "text box": "TextBox",
+    "text-box": "TextBox",
+    "textbox input": "TextBox",
+    "input": "TextBox",
+    "text area": "Text Area",
+    "textarea": "Text Area",
+    "text-area": "Text Area",
+    "multiline": "Text Area",
+    "multi-line": "Text Area",
+    "multiline text": "Text Area",
+    "heading 1": "H1",
+    "heading 2": "H2",
+    "heading 3": "H3",
+    "heading 4": "H4",
+    "heading 5": "H5",
+    "heading 6": "H6",
+    "h1 heading": "H1",
+    "h2 heading": "H2",
+    "h3 heading": "H3",
+    "h4 heading": "H4",
+    "h5 heading": "H5",
+    "h6 heading": "H6",
+    "grid": "Table",
+    "datatable": "Table",
+    "data table": "Table",
+    "tab": "Tabs",
+    "tab bar": "Tabs",
+    "tab group": "Tabs",
+    "tab set": "Tabs",
+    "tabbed view": "Tabs",
+}
 
 FIELD_TYPES: tuple[str, ...] = (
     "Text",
@@ -47,10 +97,11 @@ FIELD_TYPES: tuple[str, ...] = (
 KIND_SHORT_LABELS = {
     MENU: "menu",
     FIELDS: "modal/fields",
+    COMPONENTS: "components",
 }
 
 SCHEMA_NAME = "PMAI"
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 def utc_now() -> str:
@@ -84,12 +135,29 @@ def normalize_kind(value: Any) -> str:
     text = str(value or "").strip().lower()
     if text in {MENU, "nav", "navigation", "sidebar"}:
         return MENU
+    if text in {COMPONENTS, "component", "ui", "ui components", "ui-components"}:
+        return COMPONENTS
     return FIELDS
+
+
+def is_component_type(value: Any) -> bool:
+    text = str(value or "").strip().lower()
+    return text in _COMPONENT_TYPE_LOOKUP or text in _COMPONENT_TYPE_ALIASES
+
+
+def normalize_component_type(value: Any, default: str = "Button") -> str:
+    """Return a canonical component type, tolerating case and heading aliases."""
+    text = str(value or "").strip().lower()
+    if text in _COMPONENT_TYPE_LOOKUP:
+        return _COMPONENT_TYPE_LOOKUP[text]
+    if text in _COMPONENT_TYPE_ALIASES:
+        return _COMPONENT_TYPE_ALIASES[text]
+    return default
 
 
 @dataclass
 class Row:
-    """One row of a table: a menu item or a database field."""
+    """One row of a table: a menu item, database field, or UI component."""
 
     id: str = field(default_factory=lambda: new_id("row"))
     name: str = ""
@@ -131,7 +199,7 @@ class Row:
 
 @dataclass
 class Table:
-    """A menu table or a modal/database-field table."""
+    """A menu table, a modal/database-field table, or a component table."""
 
     id: str = field(default_factory=lambda: new_id("tbl"))
     name: str = "Untitled table"
@@ -224,6 +292,9 @@ class Project:
     def field_tables(self) -> list[Table]:
         return [t for t in self.tables if t.kind == FIELDS]
 
+    def component_tables(self) -> list[Table]:
+        return [t for t in self.tables if t.kind == COMPONENTS]
+
     def total_rows(self) -> int:
         return sum(len(t.rows) for t in self.tables)
 
@@ -296,6 +367,8 @@ class Project:
                     row.name = "Unnamed"
                 if table.kind == MENU:
                     row.type = MENU_ROW
+                elif table.kind == COMPONENTS:
+                    row.type = normalize_component_type(row.type)
                 elif not str(row.type).strip():
                     row.type = "Text"
 

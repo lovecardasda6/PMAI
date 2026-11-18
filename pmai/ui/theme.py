@@ -32,6 +32,9 @@ MENU_LINE = "#E7A845"
 FIELDS_FG = "#1D4ED8"
 FIELDS_BG = "#E8F0FF"
 FIELDS_LINE = "#6492F5"
+COMPONENTS_FG = "#0F766E"
+COMPONENTS_BG = "#E6FFFA"
+COMPONENTS_LINE = "#2DD4BF"
 
 LINK_COLOR = "#7286F2"
 LINK_SELECTED = "#4338CA"
@@ -67,6 +70,17 @@ TYPE_COLORS: dict[str, tuple[str, str]] = {
     "Password": ("#BE123C", "#FFF1F2"),
     "JSON": ("#52525B", "#F4F4F5"),
     "Formula": ("#7E22CE", "#FAF5FF"),
+    "Button": ("#4338CA", "#EEF2FF"),
+    "TextBox": ("#0E7490", "#ECFEFF"),
+    "Text Area": ("#155E75", "#E0F2FE"),
+    "Table": ("#0F766E", "#E6FFFA"),
+    "Tabs": ("#BE185D", "#FDF2F8"),
+    "H1": ("#6D28D9", "#F5F3FF"),
+    "H2": ("#7C3AED", "#F5F3FF"),
+    "H3": ("#8B5CF6", "#FAF5FF"),
+    "H4": ("#9333EA", "#FAF5FF"),
+    "H5": ("#A855F7", "#FDF4FF"),
+    "H6": ("#C026D3", "#FDF4FF"),
 }
 DEFAULT_TYPE_COLORS = ("#5B6880", "#F1F4F8")
 
@@ -102,6 +116,8 @@ def type_colors(type_name: str) -> tuple[str, str]:
 def kind_colors(kind: str) -> tuple[str, str]:
     if kind == "menu":
         return MENU_FG, MENU_BG
+    if kind == "components":
+        return COMPONENTS_FG, COMPONENTS_BG
     return FIELDS_FG, FIELDS_BG
 
 

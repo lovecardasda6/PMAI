@@ -16,6 +16,12 @@ MIN_ZOOM = 0.35
 MAX_ZOOM = 2.0
 ZOOM_STEP = 1.15
 
+KIND_PILL_LABELS = {
+    "menu": "MENU",
+    "fields": "FIELDS",
+    "components": "COMPONENTS",
+}
+
 
 @dataclass
 class Hit:
@@ -126,8 +132,9 @@ class DiagramView(tk.Canvas):
         tk.Label(
             self.empty,
             text=(
-                "Sketch menu tables, model your database fields, and connect rows "
-                "with arrows. Translate the whole diagram into a precise build brief."
+                "Sketch menu tables, model your database fields, design UI "
+                "components, and connect rows with arrows. Translate the whole "
+                "diagram into a precise build brief."
             ),
             bg=theme.BG,
             fg=theme.MUTED,
@@ -417,7 +424,7 @@ class DiagramView(tk.Canvas):
             outline="",
         )
         title_x = x1 + pad + 12 * z
-        pill_text = "MENU" if table.kind == "menu" else "FIELDS"
+        pill_text = KIND_PILL_LABELS.get(table.kind, "FIELDS")
         pill_font_px = 8.8 * z
         pill_font = self._font(pill_font_px, "bold")
         pill_w = pill_font.measure(pill_text) + 17 * z
@@ -545,7 +552,12 @@ class DiagramView(tk.Canvas):
                 font=theme.px_font(12.2 * z),
             )
             # type pill
-            type_text = "Menu" if table.kind == "menu" else (row.type or "Text")
+            if table.kind == "menu":
+                type_text = "Menu"
+            elif table.kind == "components":
+                type_text = row.type or "Button"
+            else:
+                type_text = row.type or "Text"
             fg, bg = theme.type_colors(type_text)
             chip_font_px = 9.0 * z
             chip_font = self._font(chip_font_px, "bold")

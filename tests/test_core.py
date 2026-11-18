@@ -6,7 +6,14 @@ from pathlib import Path
 import pytest
 
 from pmai.layout import auto_layout
-from pmai.models import Project, Row, Table
+from pmai.models import (
+    COMPONENTS,
+    Project,
+    Row,
+    Table,
+    normalize_component_type,
+    normalize_kind,
+)
 from pmai.sample import build_sample_project
 from pmai.storage import (
     BIN_MAGIC,
@@ -67,6 +74,44 @@ def test_menu_rows_are_forced_to_menu_type():
     assert table.rows[0].type == "Menu"
 
 
+def test_component_kind_and_types_are_normalized():
+    table = Table(
+        name="Invoice UI",
+        kind=COMPONENTS,
+        rows=[
+            Row(name="Save", type="button"),
+            Row(name="Email", type="textbox"),
+            Row(name="Message", type="textarea"),
+            Row(name="Results", type="data table"),
+            Row(name="Settings", type="tab group"),
+            Row(name="Title", type="heading 1"),
+            Row(name="Subtitle", type="h3"),
+            Row(name="Mystery", type="something-else"),
+        ],
+    )
+    project = Project(tables=[table])
+    project.normalize()
+
+    assert table.kind == COMPONENTS
+    assert [row.type for row in table.rows] == [
+        "Button",
+        "TextBox",
+        "Text Area",
+        "Table",
+        "Tabs",
+        "H1",
+        "H3",
+        "Button",
+    ]
+    assert project.component_tables() == [table]
+    assert normalize_kind("ui components") == COMPONENTS
+    assert normalize_component_type("HEADING 6") == "H6"
+    assert normalize_component_type("text box") == "TextBox"
+    assert normalize_component_type("multi-line") == "Text Area"
+    assert normalize_component_type("tab bar") == "Tabs"
+    assert normalize_component_type("") == "Button"
+
+
 def test_remove_table_clears_incoming_links():
     a = Table(name="A", kind="menu")
     b = Table(name="B", kind="fields")
@@ -101,6 +146,37 @@ def test_brief_contains_tables_links_and_notes():
     assert "Source table" in brief
     assert "Modal / database-field tables" in brief
     assert "Do **not** invent menu items" in brief
+
+
+def test_brief_contains_component_tables():
+    components = Table(
+        name="Invoice UI",
+        kind=COMPONENTS,
+        notes="Shared across billing screens.",
+        rows=[
+            Row(name="New invoice", type="Button", notes="Primary action."),
+            Row(name="Customer name", type="TextBox"),
+            Row(name="Notes", type="Text Area"),
+            Row(name="Invoices", type="Table"),
+            Row(name="Settings", type="Tabs"),
+            Row(name="Billing", type="H1"),
+            Row(name="Summary", type="H2"),
+        ],
+    )
+    brief = build_ai_brief(
+        Project(name="Components Demo", tables=[components])
+    )
+
+    assert "## 5. Component tables (UI building blocks)" in brief
+    assert "| Component | Type | Notes | Links to |" in brief
+    assert "New invoice" in brief
+    assert "| Customer name | TextBox |" in brief
+    assert "| Notes | Text Area |" in brief
+    assert "| Settings | Tabs |" in brief
+    assert "| Billing | H1 |" in brief
+    assert "## 6. Link map (drawing arrows)" in brief
+    assert "Build the **Invoice UI** component table" in brief
+    assert "**Component tables:** 1" in brief
 
 
 def test_brief_empty_project():

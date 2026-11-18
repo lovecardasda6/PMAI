@@ -8,13 +8,18 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 
 from ..models import (
+    COMPONENT_TYPES,
+    COMPONENTS,
     FIELD_TYPES,
+    FIELDS,
     MENU,
     MENU_ROW,
     Project,
     Row,
     Table,
+    is_component_type,
     new_id,
+    normalize_component_type,
 )
 from ..translation import default_brief_filename
 from . import theme
@@ -49,7 +54,7 @@ def _format_timestamp(value: str) -> str:
 
 
 class TableDialog(BaseDialog):
-    """Create or edit a menu / database-field table."""
+    """Create or edit a menu, database-field, or component table."""
 
     def __init__(self, parent, project: Project, table: Table | None = None):
         creating = table is None
@@ -58,17 +63,22 @@ class TableDialog(BaseDialog):
         self.rows = [row.clone() for row in self._table.rows]
         title = "New table" if creating else "Edit table"
         subtitle = (
-            "Define a navigation menu or a modal / database model, then add its rows."
+            "Define navigation, a data model, or reusable UI components, "
+            "then add its rows."
         )
         super().__init__(
             parent,
             title,
             subtitle,
-            width=780,
+            width=820,
             height=710,
         )
         self._creating = creating
-        self._kind = self._table.kind if self._table.kind in {"menu", "fields"} else MENU
+        self._kind = (
+            self._table.kind
+            if self._table.kind in {MENU, FIELDS, COMPONENTS}
+            else MENU
+        )
         self._build()
         self.add_footer_button("Cancel", self._cancel)
         self._primary = self.add_footer_button(
@@ -105,18 +115,27 @@ class TableDialog(BaseDialog):
         toggle.pack(fill="x")
         toggle.grid_columnconfigure(0, weight=1)
         toggle.grid_columnconfigure(1, weight=1)
+        toggle.grid_columnconfigure(2, weight=1)
         self.menu_button = FlatButton(
-            toggle, text="Menu", command=lambda: self._set_kind("menu"), padx=16, pady=6
+            toggle, text="Menu", command=lambda: self._set_kind("menu"), padx=14, pady=6
         )
         self.menu_button.grid(row=0, column=0, sticky="ew", padx=(0, 4))
         self.fields_button = FlatButton(
             toggle,
             text="Data fields",
             command=lambda: self._set_kind("fields"),
-            padx=16,
+            padx=14,
             pady=6,
         )
-        self.fields_button.grid(row=0, column=1, sticky="ew", padx=(4, 0))
+        self.fields_button.grid(row=0, column=1, sticky="ew", padx=4)
+        self.components_button = FlatButton(
+            toggle,
+            text="Components",
+            command=lambda: self._set_kind("components"),
+            padx=14,
+            pady=6,
+        )
+        self.components_button.grid(row=0, column=2, sticky="ew", padx=(4, 0))
         self.kind_hint = tk.Label(
             kind_frame,
             text="",
@@ -156,8 +175,18 @@ class TableDialog(BaseDialog):
         self.count_label.pack(side="left", padx=(8, 0))
         tools = tk.Frame(rows_head, bg=theme.BG)
         tools.pack(side="right")
+        self.add_row_button = FlatButton(
+            tools,
+            text="+ Add row",
+            command=self._add_row,
+            variant="primary",
+            weight="bold",
+            size=9,
+            padx=10,
+            pady=3,
+        )
+        self.add_row_button.pack(side="left")
         for text, command in (
-            ("+ Add row", self._add_row),
             ("Edit", self._edit_row),
             ("Duplicate", self._duplicate_row),
             ("Remove", self._remove_row),
@@ -166,7 +195,7 @@ class TableDialog(BaseDialog):
                 tools,
                 text=text,
                 command=command,
-                variant="tonal" if text.startswith("+") else "ghost",
+                variant="ghost",
                 size=9,
                 padx=9,
                 pady=3,
@@ -234,42 +263,70 @@ class TableDialog(BaseDialog):
         self.name_entry.focus_set()
 
     def _kind_name(self) -> str:
-        return "Menu" if self._kind == MENU else "Data fields"
+        return {
+            MENU: "Menu",
+            FIELDS: "Data fields",
+            COMPONENTS: "Components",
+        }.get(self._kind, "Data fields")
 
     def _update_kind_buttons(self) -> None:
-        for kind, button in (("menu", self.menu_button), ("fields", self.fields_button)):
+        for kind, button in (
+            (MENU, self.menu_button),
+            (FIELDS, self.fields_button),
+            (COMPONENTS, self.components_button),
+        ):
             button.set_variant("primary" if self._kind == kind else "ghost")
         if self._kind == MENU:
             self.kind_hint.configure(text="Every row is a navigation item (Menu).")
+        elif self._kind == COMPONENTS:
+            self.kind_hint.configure(
+                text=(
+                    "Rows are UI components: Button, TextBox, Text Area, Table, "
+                    "Tabs, or H1\u2013H6."
+                )
+            )
         else:
             self.kind_hint.configure(text="Rows are database fields or modal inputs.")
 
     def _set_kind(self, kind: str) -> None:
         if kind == self._kind:
             return
-        if self.rows:
-            if kind == "fields":
-                count = sum(1 for row in self.rows if row.type == MENU_ROW)
-                if count and not messagebox.askyesno(
-                    "Change table kind?",
-                    f"{count} menu row(s) will become Text fields. Links are kept.\n\n"
-                    "Continue?",
-                    parent=self,
-                ):
-                    return
-                for row in self.rows:
-                    if row.type == MENU_ROW:
-                        row.type = "Text"
-            else:
-                if not messagebox.askyesno(
-                    "Change table kind?",
-                    "All rows will become Menu navigation items. Links are kept.\n\n"
-                    "Continue?",
-                    parent=self,
-                ):
-                    return
-                for row in self.rows:
-                    row.type = MENU_ROW
+        if kind == MENU:
+            converts = [row for row in self.rows if row.type != MENU_ROW]
+            if converts and not messagebox.askyesno(
+                "Change table kind?",
+                f"All {len(converts)} row(s) will become Menu navigation items. "
+                "Links are kept.\n\nContinue?",
+                parent=self,
+            ):
+                return
+            for row in self.rows:
+                row.type = MENU_ROW
+        elif kind == COMPONENTS:
+            if self.rows and not messagebox.askyesno(
+                "Change table kind?",
+                f"All {len(self.rows)} row(s) will become Button components. "
+                "Links are kept.\n\nContinue?",
+                parent=self,
+            ):
+                return
+            for row in self.rows:
+                row.type = "Button"
+        else:
+            converts = [
+                row
+                for row in self.rows
+                if row.type == MENU_ROW or is_component_type(row.type)
+            ]
+            if converts and not messagebox.askyesno(
+                "Change table kind?",
+                f"{len(converts)} menu/component row(s) will become Text fields. "
+                "Links are kept.\n\nContinue?",
+                parent=self,
+            ):
+                return
+            for row in converts:
+                row.type = "Text"
         self._kind = kind
         self._update_kind_buttons()
         self._refresh_rows()
@@ -286,7 +343,12 @@ class TableDialog(BaseDialog):
             select_id = current[0] if current else None
         self.tree.delete(*self.tree.get_children())
         for index, row in enumerate(self.rows):
-            display_type = MENU_ROW if self._kind == MENU else row.type
+            if self._kind == MENU:
+                display_type = MENU_ROW
+            elif self._kind == COMPONENTS:
+                display_type = normalize_component_type(row.type)
+            else:
+                display_type = row.type
             self.tree.insert(
                 "",
                 "end",
@@ -419,6 +481,8 @@ class TableDialog(BaseDialog):
                 return
             if self._kind == MENU:
                 row.type = MENU_ROW
+            elif self._kind == COMPONENTS:
+                row.type = normalize_component_type(row.type)
             elif not str(row.type).strip() or row.type == MENU_ROW:
                 row.type = "Text"
             if row.link_table_id == self._table.id:
@@ -432,7 +496,7 @@ class TableDialog(BaseDialog):
 
 
 class RowDialog(BaseDialog):
-    """Add or edit one menu item / field row."""
+    """Add or edit one menu item / field / component row."""
 
     def __init__(
         self,
@@ -447,11 +511,12 @@ class RowDialog(BaseDialog):
         self.targets = targets
         self._row = row.clone() if row else Row(name="", type=row_type_for(table_kind))
         editing = row is not None
-        subtitle = (
-            "Describe a menu item and optionally point it at another table."
-            if table_kind == MENU
-            else "Describe a field, its type, and any validation or behavior notes."
-        )
+        if table_kind == MENU:
+            subtitle = "Describe a menu item and optionally point it at another table."
+        elif table_kind == COMPONENTS:
+            subtitle = "Describe a UI component, its type, and where it is used."
+        else:
+            subtitle = "Describe a field, its type, and any validation or behavior notes."
         super().__init__(parent, title, subtitle, width=640, height=570)
         self._build()
         self.add_footer_button("Cancel", self._cancel)
@@ -484,9 +549,13 @@ class RowDialog(BaseDialog):
         type_frame = tk.Frame(two, bg=theme.BG)
         type_frame.grid(row=0, column=0, sticky="ew", padx=(0, 10))
         field_label(type_frame, "Type").pack(fill="x", pady=(0, 6))
-        self.type_var = tk.StringVar(
-            value=MENU_ROW if self.table_kind == MENU else self._row.type or "Text"
-        )
+        if self.table_kind == MENU:
+            initial_type = MENU_ROW
+        elif self.table_kind == COMPONENTS:
+            initial_type = normalize_component_type(self._row.type)
+        else:
+            initial_type = self._row.type or "Text"
+        self.type_var = tk.StringVar(value=initial_type)
         if self.table_kind == MENU:
             self.type_widget = make_entry(type_frame, self.type_var)
             self.type_widget.configure(
@@ -496,6 +565,15 @@ class RowDialog(BaseDialog):
                 font=theme.font(10, "bold"),
             )
             self.type_widget.pack(fill="x", ipady=6)
+        elif self.table_kind == COMPONENTS:
+            self.type_widget = ttk.Combobox(
+                type_frame,
+                textvariable=self.type_var,
+                values=list(COMPONENT_TYPES),
+                state="readonly",
+                font=theme.font(10),
+            )
+            self.type_widget.pack(fill="x", ipady=4)
         else:
             self.type_widget = ttk.Combobox(
                 type_frame,
@@ -505,17 +583,21 @@ class RowDialog(BaseDialog):
                 font=theme.font(10),
             )
             self.type_widget.pack(fill="x", ipady=4)
+        if self.table_kind == MENU:
+            type_hint = "All rows in a menu table are Menu items."
+        elif self.table_kind == COMPONENTS:
+            type_hint = "Button, TextBox, Text Area, Table, Tabs, or H1\u2013H6."
+        else:
+            type_hint = "Pick a type or type a custom one."
         tk.Label(
             type_frame,
-            text=(
-                "All rows in a menu table are Menu items."
-                if self.table_kind == MENU
-                else "Pick a type or type a custom one."
-            ),
+            text=type_hint,
             bg=theme.BG,
             fg=theme.FAINT,
             font=theme.font(8),
             anchor="w",
+            justify="left",
+            wraplength=260,
         ).pack(fill="x", pady=(5, 0))
 
         link_frame = tk.Frame(two, bg=theme.BG)
@@ -545,13 +627,15 @@ class RowDialog(BaseDialog):
             font=theme.font(10),
         )
         self.link_combo.pack(fill="x", ipady=4)
+        if self.table_kind == MENU:
+            link_hint = "The row opens this target table."
+        elif self.table_kind == COMPONENTS:
+            link_hint = "Optional: component opens this table."
+        else:
+            link_hint = "Optional foreign-key / detail link."
         tk.Label(
             link_frame,
-            text=(
-                "The row opens this target table."
-                if self.table_kind == MENU
-                else "Optional foreign-key / detail link."
-            ),
+            text=link_hint,
             bg=theme.BG,
             fg=theme.FAINT,
             font=theme.font(8),
@@ -585,6 +669,8 @@ class RowDialog(BaseDialog):
             return
         if self.table_kind == MENU:
             type_name = MENU_ROW
+        elif self.table_kind == COMPONENTS:
+            type_name = normalize_component_type(self.type_var.get())
         else:
             type_name = self.type_var.get().strip() or "Text"
         link_label = self.link_var.get()
@@ -598,7 +684,11 @@ class RowDialog(BaseDialog):
 
 
 def row_type_for(kind: str) -> str:
-    return MENU_ROW if kind == MENU else "Text"
+    if kind == MENU:
+        return MENU_ROW
+    if kind == COMPONENTS:
+        return "Button"
+    return "Text"
 
 
 class ProjectDialog(BaseDialog):

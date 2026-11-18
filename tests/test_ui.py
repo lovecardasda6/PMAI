@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 from pmai import cardmetrics
-from pmai.models import MENU, Row, Table
+from pmai.models import COMPONENTS, MENU, Row, Table
 from pmai.ui import main as main_module
 from pmai.ui.diagram import Hit
 from pmai.ui.main import MainWindow
@@ -45,6 +45,17 @@ def test_sample_project_loads(app: MainWindow):
     assert app.dirty is True
     assert "4 tables" in app.counts_label.cget("text")
     assert app.view.link_mode is False
+
+
+def test_component_tables_are_counted(app: MainWindow):
+    app.project.add_table(
+        Table(name="Invoice UI", kind=COMPONENTS, rows=[Row(name="Save", type="Button")])
+    )
+    app._update_counts()
+
+    text = app.counts_label.cget("text")
+    assert "5 tables" in text
+    assert "1 component" in text
 
 
 def test_add_table_from_dialog_and_undo(app: MainWindow, monkeypatch):

@@ -4,7 +4,15 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from pmai.models import FIELDS, MENU, Project, Row, Table
+from pmai.models import (
+    COMPONENT_TYPES,
+    COMPONENTS,
+    FIELDS,
+    MENU,
+    Project,
+    Row,
+    Table,
+)
 from pmai.ui import dialogs as dialogs_module
 from pmai.ui.dialogs import BriefDialog, ProjectDialog, RowDialog, TableDialog
 
@@ -63,6 +71,79 @@ def test_table_dialog_switch_to_fields_rewrites_menu_rows(root, monkeypatch):
     assert result is not None
     assert result.kind == FIELDS
     assert result.rows[0].type == "Text"
+
+
+def test_table_dialog_creates_component_table(root):
+    dialog = TableDialog(root, Project())
+    dialog.name_var.set("Invoice UI")
+    dialog._set_kind(COMPONENTS)
+    dialog.rows = [
+        Row(name="Save", type="Button"),
+        Row(name="Customer", type="Text Box"),
+        Row(name="Notes", type="textarea"),
+        Row(name="Invoices", type="Table"),
+        Row(name="Settings", type="tab bar"),
+        Row(name="Billing", type="h2"),
+    ]
+
+    dialog._submit()
+
+    result = dialog.result
+    assert result is not None
+    assert result.kind == COMPONENTS
+    assert [row.type for row in result.rows] == [
+        "Button",
+        "TextBox",
+        "Text Area",
+        "Table",
+        "Tabs",
+        "H2",
+    ]
+
+
+def test_table_dialog_switch_to_components_rewrites_rows(root, monkeypatch):
+    monkeypatch.setattr(
+        dialogs_module.messagebox, "askyesno", lambda *args, **kwargs: True
+    )
+    table = Table(name="Data", kind=FIELDS, rows=[Row(name="Amount", type="Currency")])
+    dialog = TableDialog(root, Project(), table=table)
+
+    dialog._set_kind(COMPONENTS)
+    dialog._submit()
+
+    result = dialog.result
+    assert result is not None
+    assert result.kind == COMPONENTS
+    assert result.rows[0].type == "Button"
+
+
+def test_row_dialog_offers_component_types(root):
+    dialog = RowDialog(
+        root, row=None, table_kind=COMPONENTS, targets=[], title="Add row"
+    )
+
+    assert list(dialog.type_widget.cget("values")) == list(COMPONENT_TYPES)
+    assert str(dialog.type_widget.cget("state")) == "readonly"
+
+    dialog.name_var.set("Section title")
+    dialog.type_var.set("H4")
+    dialog._submit()
+
+    assert dialog.result is not None
+    assert dialog.result.type == "H4"
+
+
+def test_row_dialog_falls_back_to_button_for_unknown_component_type(root):
+    dialog = RowDialog(
+        root, row=None, table_kind=COMPONENTS, targets=[], title="Add row"
+    )
+    dialog.name_var.set("Card")
+    dialog.type_var.set("Card")
+
+    dialog._submit()
+
+    assert dialog.result is not None
+    assert dialog.result.type == "Button"
 
 
 def test_row_dialog_requires_a_name(root):

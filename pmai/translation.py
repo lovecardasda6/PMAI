@@ -48,8 +48,8 @@ def _brief_empty() -> str:
         "# AI Build Brief\n\n"
         "This project does not contain any tables yet.\n\n"
         "Add a **Menu** table for navigation, a **Modal / Fields** table for a "
-        "data model, and add rows to describe each item. Then generate this "
-        "brief again.\n"
+        "data model, or a **Components** table for reusable UI pieces, and add "
+        "rows to describe each item. Then generate this brief again.\n"
     )
 
 
@@ -66,6 +66,7 @@ def build_ai_brief(
     table_lookup = {table.id: table for table in project.tables}
     menu_tables = project.menu_tables()
     field_tables = project.field_tables()
+    component_tables = project.component_tables()
     roots = project.root_menu_tables()
     incoming = project.incoming_links()
 
@@ -85,6 +86,7 @@ def build_ai_brief(
         out.append(f"- **Description:** {_inline(project.description)}")
     out.append(f"- **Menu tables:** {len(menu_tables)}")
     out.append(f"- **Modal / field tables:** {len(field_tables)}")
+    out.append(f"- **Component tables:** {len(component_tables)}")
     out.append(f"- **Rows total:** {project.total_rows()}")
     if roots:
         names = ", ".join(_inline(t.name) for t in roots)
@@ -109,19 +111,29 @@ def build_ai_brief(
         "(modal, drawer, or dedicated page — choose the most appropriate pattern)."
     )
     out.append(
-        "4. **Modal / fields tables** define data models and the forms that edit "
+        "4. A menu row linked to a **components** table opens that component "
+        "view, page, or reusable block."
+    )
+    out.append(
+        "5. **Modal / fields tables** define data models and the forms that edit "
         "them. Treat each row as a field and its type as the storage/input type."
     )
     out.append(
-        "5. Follow every table note and row note exactly. Notes may add behavior, "
+        "6. **Component tables** describe reusable UI building blocks. Every row "
+        "is one component, typed as `Button`, `TextBox`, `Text Area`, `Table`, "
+        "`Tabs`, or `H1`–`H6`. `H1` is the largest heading and `H6` the smallest; "
+        "build them as real semantic heading levels."
+    )
+    out.append(
+        "7. Follow every table note and row note exactly. Notes may add behavior, "
         "defaults, or placement instructions that are not visible in the columns."
     )
     out.append(
-        "6. Keep labels and spelling as written. Do **not** invent menu items, "
-        "fields, screens, or business rules that are not described here."
+        "8. Keep labels and spelling as written. Do **not** invent menu items, "
+        "fields, components, screens, or business rules that are not described here."
     )
     out.append(
-        "7. Top-level menu tables (those with no incoming links) are the primary "
+        "9. Top-level menu tables (those with no incoming links) are the primary "
         "navigation entry points, normally rendered as a sidebar."
     )
     out.append("")
@@ -193,6 +205,39 @@ def build_ai_brief(
         out.append("")
 
     section += 1
+    out.append(f"## {section}. Component tables (UI building blocks)")
+    out.append("")
+    if not component_tables:
+        out.append("_No component tables were defined._")
+        out.append("")
+    for index, table in enumerate(component_tables, start=1):
+        links_in = incoming.get(table.id, [])
+        out.append(f"### {section}.{index} {_inline(table.name) or 'Untitled table'}")
+        out.append("")
+        out.append("- **Kind:** Components")
+        out.append(
+            "- **Incoming links:** "
+            + (
+                ", ".join(f"{_inline(src.name)} / {_inline(row.name)}" for src, row in links_in)
+                if links_in
+                else "None"
+            )
+        )
+        out.append("")
+        _notes_line("Table notes", table.notes, out)
+        out.append("| Component | Type | Notes | Links to |")
+        out.append("| --- | --- | --- | --- |")
+        if table.rows:
+            for row in table.rows:
+                out.append(
+                    f"| {_cell(row.name)} | {_cell(row.type)} | {_cell(row.notes)} | "
+                    f"{_cell(_row_link(row, table_lookup))} |"
+                )
+        else:
+            out.append("| _No components_ | — | — | — |")
+        out.append("")
+
+    section += 1
     out.append(f"## {section}. Link map (drawing arrows)")
     out.append("")
     links = []
@@ -226,6 +271,12 @@ def build_ai_brief(
         out.append(
             f"- [ ] Create the **{_inline(table.name)}** data model, validation, "
             "list view, and create/edit form."
+        )
+    for table in component_tables:
+        out.append(
+            f"- [ ] Build the **{_inline(table.name)}** component table and add "
+            "every listed Button, text input, Table, Tabs, and heading at the "
+            "correct hierarchy."
         )
     if links:
         out.append(

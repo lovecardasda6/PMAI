@@ -491,8 +491,13 @@ class MainWindow(tk.Tk):
         rows = "row" if row_count == 1 else "rows"
         menu = len(self.project.menu_tables())
         fields = len(self.project.field_tables())
+        components = len(self.project.component_tables())
+        component_word = "component" if components == 1 else "components"
         self.counts_label.configure(
-            text=f"{table_count} {tables}  \u00b7  {row_count} {rows}  \u00b7  {menu} menu / {fields} fields"
+            text=(
+                f"{table_count} {tables}  \u00b7  {row_count} {rows}  \u00b7  "
+                f"{menu} menu / {fields} fields / {components} {component_word}"
+            )
         )
 
     def mark_dirty(self) -> None:
@@ -931,7 +936,8 @@ class MainWindow(tk.Tk):
             ("Draw first, build later\n", "h"),
             (
                 "PMAI is an offline sketchpad for app structure. Build a diagram of "
-                "menus and data fields, then translate it into a brief an AI can follow.\n\n",
+                "menus, data fields, and UI components, then translate it into a "
+                "brief an AI can follow.\n\n",
                 None,
             ),
             ("Start with a project\n", "h"),
@@ -942,14 +948,17 @@ class MainWindow(tk.Tk):
             ),
             ("1. Add a table\n", "h"),
             (
-                "Choose Menu for navigation or Data fields for a modal / database model. "
-                "Give it a name and optional notes. Every row has a name, type and notes.\n\n",
+                "Choose Menu for navigation, Data fields for a modal / database "
+                "model, or Components for reusable UI pieces. Give it a name and "
+                "optional notes. Every row has a name, type and notes.\n\n",
                 None,
             ),
             ("2. Add rows\n", "h"),
             (
-                "Menu tables only allow Menu rows. Data-field tables let you pick a field "
-                "type or type a custom one (Text, DateTime, Currency, Reference\u2026).\n\n",
+                "Menu tables only allow Menu rows. Data-field tables let you pick a "
+                "field type or type a custom one (Text, DateTime, Currency, "
+                "Reference\u2026). Component tables use Button, TextBox, Text Area, "
+                "Table, Tabs, or H1\u2013H6.\n\n",
                 None,
             ),
             ("3. Link a row to a table\n", "h"),
@@ -1005,8 +1014,9 @@ class MainWindow(tk.Tk):
             (f"PMAI {__version__}\n", "h"),
             ("Project \u2192 Prompt\n\n", "b"),
             (
-                "PMAI turns a visual map of menus, modals and database fields into a "
-                "precise AI build brief. It is local, offline and dependency-free.\n\n",
+                "PMAI turns a visual map of menus, data fields, and UI components "
+                "into a precise AI build brief. It is local, offline and "
+                "dependency-free.\n\n",
                 None,
             ),
             ("Formats\n", "h"),
