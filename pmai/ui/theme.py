@@ -63,6 +63,8 @@ TYPE_COLORS: dict[str, tuple[str, str]] = {
     "URL": ("#0369A1", "#F0F9FF"),
     "Select": ("#BE185D", "#FDF2F8"),
     "Multi Select": ("#BE185D", "#FDF2F8"),
+    "Enum": ("#7E22CE", "#FAF5FF"),
+    "DropDown": ("#0369A1", "#F0F9FF"),
     "Auto ID": ("#4338CA", "#EEF2FF"),
     "Reference": ("#1D4ED8", "#EFF6FF"),
     "File": ("#0F766E", "#F0FDFA"),

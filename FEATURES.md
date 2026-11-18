@@ -15,7 +15,7 @@ Every card on the canvas is a table. Tables describe one part of the app.
 | Kind | Purpose | Row types | Card badge |
 | --- | --- | --- | --- |
 | **Menu** | Sidebar entries, navigation, nested pages | `Menu` (fixed) | Amber `MENU` |
-| **Data fields** | Database models, forms, modals, detail views | 22 field types plus custom text | Blue `FIELDS` |
+| **Data fields** | Database models, forms, modals, detail views | 24 field types plus custom text | Blue `FIELDS` |
 | **Components** | Reusable UI building blocks and headings | `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, `H1`–`H6` | Teal `COMPONENTS` |
 
 You can change a table's kind at any time. PMAI asks before converting existing
@@ -47,11 +47,12 @@ Hand-edited project files are repaired automatically. For example, `button`,
 
 ## Field types
 
-Field tables support 22 built-in types:
+Field tables support 24 built-in types:
 
 `Text`, `Long Text`, `Number`, `Integer`, `Decimal`, `Currency`, `Boolean`,
 `Date`, `Time`, `DateTime`, `Email`, `Phone`, `URL`, `Select`, `Multi Select`,
-`Auto ID`, `Reference`, `File`, `Image`, `Password`, `JSON`, and `Formula`.
+`Enum`, `DropDown`, `Auto ID`, `Reference`, `File`, `Image`, `Password`, `JSON`,
+and `Formula`.
 
 You can also type any custom field type, such as `Rating (1–5)` or `Color`.
 
@@ -135,6 +136,7 @@ across saves.
 
 - New **Components** table kind.
 - New `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, and `H1`–`H6` row types.
+- New `Enum` and `DropDown` data field types.
 - Component cards, counts, editor hints, normalization, and AI-brief support.
 - Project format version 2, with backward-compatible loading of version 1 files.
 - Expanded tests and refreshed public documentation.

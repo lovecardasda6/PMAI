@@ -19,13 +19,14 @@ for a public release.
 - **Components table kind.** Projects can now contain a table named
   *Components* alongside *Menu* and *Data fields* tables.
 - **Component row types:** `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`,
-  and `H1` through `H6`.
+  and `H1` through `H6`. Component rows use a fixed, read-only type picker so
+  the hierarchy stays consistent.
 - **Text input components.** `TextBox` and `Text Area` are available in the
   fixed component type picker, with their own canvas chips and brief output.
 - **Tabs component.** `Tabs` is available for tab bars and tabbed sections,
   including `tab`, `tab bar`, and `tab group` aliases.
-  Component rows use a fixed, read-only type picker so the hierarchy stays
-  consistent.
+- **New data field types.** `Enum` and `DropDown` are built-in field types with
+  their own canvas chips, suitable for fixed option lists and select menus.
 - **Component editor UI.** The table editor has a new *Components* kind button,
   component-specific hints, and type-aware row editing.
 - **Component cards on the canvas.** Component tables use their own teal badge
@@ -37,8 +38,9 @@ for a public release.
   arrows and the link map work exactly like menu and field rows.
 - **Live component counts** in the status bar.
 - **Component normalization.** Hand-edited projects and imported files are
-  repaired automatically: `button`, `heading 1`, `data table`, and similar
-  spellings are converted to canonical component types.
+  repaired automatically: `button`, `text box`, `textarea`, `tab bar`,
+  `heading 1`, `data table`, and similar spellings are converted to canonical
+  component types.
 - **New tests** covering component normalization, the table and row dialogs,
   the AI brief, and status-bar counts.
 - **Public-release documentation:** a rewritten `README.md`, a complete

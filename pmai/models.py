@@ -85,6 +85,8 @@ FIELD_TYPES: tuple[str, ...] = (
     "URL",
     "Select",
     "Multi Select",
+    "Enum",
+    "DropDown",
     "Auto ID",
     "Reference",
     "File",

@@ -35,6 +35,7 @@ runtime Python packages.
 - **New Components table kind** for reusable UI building blocks.
 - **New component types:** `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`,
   and heading levels `H1`–`H6`.
+- **New data field types:** `Enum` and `DropDown`.
 - Component tables appear on the canvas, in the status bar, and in the AI brief.
 - Project format version 2; version 1 projects still open normally.
 - Refreshed public documentation, feature list, and changelog.
@@ -46,7 +47,7 @@ See [CHANGELOG.md](CHANGELOG.md) for details.
 - **Three table kinds** — Menu, Data fields, and Components.
 - **Rows with three columns** — Name, Type, and Notes. Tables also have notes
   that appear under the card.
-- **33 built-in row types** — 22 database/field types plus 11 component types,
+- **35 built-in row types** — 24 database/field types plus 11 component types,
   with free-form custom types for field tables.
 - **Visible links** — point a row at another table to draw an arrow. Use *Link
   rows* mode, the row editor, or the right-click menu.
@@ -69,12 +70,12 @@ See [CHANGELOG.md](CHANGELOG.md) for details.
 | Kind | Use it for | Row types |
 | --- | --- | --- |
 | **Menu** | Sidebar entries and navigation | `Menu` |
-| **Data fields** | Database models, modals, and forms | 22 field types or custom |
+| **Data fields** | Database models, modals, and forms | 24 field types or custom |
 | **Components** | Reusable UI pieces and headings | `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, `H1`–`H6` |
 
 Field types include Text, Long Text, Number, Integer, Decimal, Currency, Boolean,
-Date, Time, DateTime, Email, Phone, URL, Select, Multi Select, Auto ID,
-Reference, File, Image, Password, JSON, and Formula.
+Date, Time, DateTime, Email, Phone, URL, Select, Multi Select, Enum, DropDown,
+Auto ID, Reference, File, Image, Password, JSON, and Formula.
 
 Component types are intentionally fixed so hierarchy stays consistent. The AI
 brief instructs the receiving assistant to use real semantic heading levels and

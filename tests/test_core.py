@@ -8,6 +8,7 @@ import pytest
 from pmai.layout import auto_layout
 from pmai.models import (
     COMPONENTS,
+    FIELD_TYPES,
     Project,
     Row,
     Table,
@@ -72,6 +73,11 @@ def test_menu_rows_are_forced_to_menu_type():
     project = Project(tables=[table])
     project.normalize()
     assert table.rows[0].type == "Menu"
+
+
+def test_field_types_include_enum_and_dropdown():
+    assert "Enum" in FIELD_TYPES
+    assert "DropDown" in FIELD_TYPES
 
 
 def test_component_kind_and_types_are_normalized():
