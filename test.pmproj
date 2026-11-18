@@ -1,0 +1,259 @@
+{
+  "format": "PMAI",
+  "version": 2,
+  "name": "Untitled Project",
+  "description": "",
+  "created_at": "2026-11-18T14:30:23Z",
+  "updated_at": "2026-11-18T14:51:50Z",
+  "tables": [
+    {
+      "id": "tbl_f60a736d07",
+      "name": "Main Menu",
+      "kind": "menu",
+      "notes": "",
+      "x": 60.0,
+      "y": 60.0,
+      "rows": [
+        {
+          "id": "row_3a43a61010",
+          "name": "Dashboard",
+          "type": "Menu",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_a277cab06d",
+          "name": "Items and Services",
+          "type": "Menu",
+          "notes": "",
+          "link_table_id": "tbl_c8075d7428"
+        },
+        {
+          "id": "row_93bc94d996",
+          "name": "Clients",
+          "type": "Menu",
+          "notes": "",
+          "link_table_id": "tbl_8c243f809f"
+        },
+        {
+          "id": "row_83866c5f5d",
+          "name": "Finance",
+          "type": "Menu",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_b2862393cc",
+          "name": "Inventory",
+          "type": "Menu",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_eba9df0a75",
+          "name": "Others",
+          "type": "Menu",
+          "notes": "",
+          "link_table_id": null
+        }
+      ]
+    },
+    {
+      "id": "tbl_8c243f809f",
+      "name": "Clients",
+      "kind": "components",
+      "notes": "Filter/Search Client Information",
+      "x": 633.04,
+      "y": 217.14,
+      "rows": [
+        {
+          "id": "row_ebb169332f",
+          "name": "New Client",
+          "type": "Button",
+          "notes": "Create New Client",
+          "link_table_id": "tbl_e90caa4b85"
+        },
+        {
+          "id": "row_9b4267e329",
+          "name": "Clients",
+          "type": "Table",
+          "notes": "List of Client\n[\n Account Number,\nFull Name\n]\nWhen Click on the row, View Client Full Information",
+          "link_table_id": "tbl_e90caa4b85"
+        }
+      ]
+    },
+    {
+      "id": "tbl_e90caa4b85",
+      "name": "Client",
+      "kind": "fields",
+      "notes": "Create, View, Edit",
+      "x": 1298.51,
+      "y": 256.77,
+      "rows": [
+        {
+          "id": "row_80a7480e46",
+          "name": "Account Number",
+          "type": "Number",
+          "notes": "Unique field and Auto-generate if empty, 11 Digit number",
+          "link_table_id": null
+        },
+        {
+          "id": "row_44f585da46",
+          "name": "Firstname",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_328494e8f6",
+          "name": "Lastname",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_3b4ec80040",
+          "name": "Middlename",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_7b2208e211",
+          "name": "Extension",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_a8085a03a8",
+          "name": "Full Address",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_670ae1be28",
+          "name": "Installation Date and Time",
+          "type": "DateTime",
+          "notes": "",
+          "link_table_id": null
+        }
+      ]
+    },
+    {
+      "id": "tbl_c8075d7428",
+      "name": "Item And Services",
+      "kind": "components",
+      "notes": "Tabs",
+      "x": 641.37,
+      "y": -210.76,
+      "rows": [
+        {
+          "id": "row_2f176cb714",
+          "name": "Items",
+          "type": "Tabs",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_b52457a44b",
+          "name": "Supplier",
+          "type": "Tabs",
+          "notes": "",
+          "link_table_id": "tbl_e63b5994be"
+        },
+        {
+          "id": "row_25132800d5",
+          "name": "Internet Plan",
+          "type": "Tabs",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_54fddb4b07",
+          "name": "Packages",
+          "type": "Tabs",
+          "notes": "",
+          "link_table_id": null
+        }
+      ]
+    },
+    {
+      "id": "tbl_e63b5994be",
+      "name": "Supplier Table",
+      "kind": "components",
+      "notes": "Search Supplier, Datatable with 10 item per paginations [10,20,50,100, all]",
+      "x": 1272.14,
+      "y": -176.79,
+      "rows": [
+        {
+          "id": "row_21f711fa5b",
+          "name": "Add Supplier",
+          "type": "Button",
+          "notes": "",
+          "link_table_id": "tbl_545c4f6188"
+        },
+        {
+          "id": "row_c2949c5e66",
+          "name": "Suppliers",
+          "type": "Table",
+          "notes": "List of Suppliers,\nWhen row is click view the click Supplier full information",
+          "link_table_id": "tbl_545c4f6188"
+        }
+      ]
+    },
+    {
+      "id": "tbl_545c4f6188",
+      "name": "Supplier",
+      "kind": "fields",
+      "notes": "",
+      "x": 1850.54,
+      "y": -195.18,
+      "rows": [
+        {
+          "id": "row_4a1de58bf4",
+          "name": "Supplier Code",
+          "type": "Text",
+          "notes": "Autogenerated if empty",
+          "link_table_id": null
+        },
+        {
+          "id": "row_c9223e9af7",
+          "name": "Company Name",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_4e3c02a1de",
+          "name": "Contact Number",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_13e094ad0e",
+          "name": "Full Addresss",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_827431532d",
+          "name": "Email Address",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_65520c83ff",
+          "name": "TIN",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        }
+      ]
+    }
+  ]
+}
