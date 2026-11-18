@@ -1,0 +1,155 @@
+{
+  "format": "PMAI",
+  "version": 1,
+  "name": "Billing Demo",
+  "description": "A small billing app with a sidebar navigation, invoices, and a transaction log.",
+  "created_at": "2026-11-18T09:55:47Z",
+  "updated_at": "2026-11-18T09:55:47Z",
+  "tables": [
+    {
+      "id": "tbl_42c49f592c",
+      "name": "Sidebar",
+      "kind": "menu",
+      "notes": "I want this table to appear in the sidebar.",
+      "x": 60.0,
+      "y": 60.0,
+      "rows": [
+        {
+          "id": "row_4f7844b3da",
+          "name": "Dashboard",
+          "type": "Menu",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_78b3a761c5",
+          "name": "Billing",
+          "type": "Menu",
+          "notes": "",
+          "link_table_id": "tbl_e269b16b80"
+        }
+      ]
+    },
+    {
+      "id": "tbl_e269b16b80",
+      "name": "Billing",
+      "kind": "menu",
+      "notes": "This is a sub-menu of Sidebar > Billing. Keep it inside the sidebar navigation.",
+      "x": 600.0,
+      "y": 60.0,
+      "rows": [
+        {
+          "id": "row_249ddf8539",
+          "name": "Invoice",
+          "type": "Menu",
+          "notes": "",
+          "link_table_id": "tbl_9b76ebc968"
+        },
+        {
+          "id": "row_3749ed53c6",
+          "name": "Transactions",
+          "type": "Menu",
+          "notes": "",
+          "link_table_id": "tbl_556d640e75"
+        }
+      ]
+    },
+    {
+      "id": "tbl_9b76ebc968",
+      "name": "Invoice",
+      "kind": "fields",
+      "notes": "Auto-generate the invoice number if it is left blank.",
+      "x": 1140.0,
+      "y": 60.0,
+      "rows": [
+        {
+          "id": "row_575ec10f8f",
+          "name": "Invoice #",
+          "type": "Text",
+          "notes": "Auto-generated when blank.",
+          "link_table_id": null
+        },
+        {
+          "id": "row_b15817a4eb",
+          "name": "Date/Time",
+          "type": "DateTime",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_438f69c80a",
+          "name": "Customer",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_d8cf43888e",
+          "name": "Amount",
+          "type": "Currency",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_fd366629bf",
+          "name": "Status",
+          "type": "Select",
+          "notes": "Draft, Sent, Paid, Void",
+          "link_table_id": null
+        },
+        {
+          "id": "row_c5c60fbc58",
+          "name": "Notes",
+          "type": "Long Text",
+          "notes": "",
+          "link_table_id": null
+        }
+      ]
+    },
+    {
+      "id": "tbl_556d640e75",
+      "name": "Transactions",
+      "kind": "fields",
+      "notes": "Show newest transactions first.",
+      "x": 1140.0,
+      "y": 490.0,
+      "rows": [
+        {
+          "id": "row_5d04dc18b6",
+          "name": "Date/Time",
+          "type": "DateTime",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_02b5a7ee2d",
+          "name": "Type",
+          "type": "Select",
+          "notes": "Income or Expense",
+          "link_table_id": null
+        },
+        {
+          "id": "row_cfa42aa1ff",
+          "name": "Amount",
+          "type": "Currency",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_71ead2e42f",
+          "name": "Reference",
+          "type": "Text",
+          "notes": "",
+          "link_table_id": null
+        },
+        {
+          "id": "row_a123ab2b89",
+          "name": "Notes",
+          "type": "Long Text",
+          "notes": "",
+          "link_table_id": null
+        }
+      ]
+    }
+  ]
+}
