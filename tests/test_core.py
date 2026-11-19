@@ -90,8 +90,9 @@ def test_component_kind_and_types_are_normalized():
             Row(name="Message", type="textarea"),
             Row(name="Results", type="data table"),
             Row(name="Settings", type="tab group"),
-            Row(name="Title", type="heading 1"),
-            Row(name="Subtitle", type="h3"),
+            Row(name="Country", type="drop down"),
+            Row(name="Plan", type="radio"),
+            Row(name="Alerts", type="check box"),
             Row(name="Mystery", type="something-else"),
         ],
     )
@@ -105,16 +106,26 @@ def test_component_kind_and_types_are_normalized():
         "Text Area",
         "Table",
         "Tabs",
-        "H1",
-        "H3",
+        "DropDown",
+        "Radio Button",
+        "Checkbox",
         "Button",
     ]
     assert project.page_tables() == [table]
     assert normalize_kind("ui components") == COMPONENTS
-    assert normalize_component_type("HEADING 6") == "H6"
     assert normalize_component_type("text box") == "TextBox"
     assert normalize_component_type("multi-line") == "Text Area"
     assert normalize_component_type("tab bar") == "Tabs"
+    assert normalize_component_type("drop-down") == "DropDown"
+    assert normalize_component_type("option button") == "Radio Button"
+    assert normalize_component_type("tick box") == "Checkbox"
+    assert normalize_component_type("switch") == "Toggle"
+    assert normalize_component_type("calendar") == "Date Picker"
+    assert normalize_component_type("spinbox") == "Number Input"
+    assert normalize_component_type("search bar") == "Search"
+    assert normalize_component_type("range slider") == "Slider"
+    assert normalize_component_type("file picker") == "File Upload"
+    assert normalize_component_type("HEADING 6") == "TextBox"
     assert normalize_component_type("") == "Button"
 
 
@@ -165,8 +176,8 @@ def test_brief_contains_page_tables():
             Row(name="Notes", type="Text Area"),
             Row(name="Invoices", type="Table"),
             Row(name="Settings", type="Tabs"),
-            Row(name="Billing", type="H1"),
-            Row(name="Summary", type="H2"),
+            Row(name="Status", type="DropDown"),
+            Row(name="Notify", type="Checkbox"),
         ],
     )
     brief = build_ai_brief(
@@ -179,7 +190,8 @@ def test_brief_contains_page_tables():
     assert "| Customer name | TextBox |" in brief
     assert "| Notes | Text Area |" in brief
     assert "| Settings | Tabs |" in brief
-    assert "| Billing | H1 |" in brief
+    assert "| Status | DropDown |" in brief
+    assert "| Notify | Checkbox |" in brief
     assert "## 6. Link map (drawing arrows)" in brief
     assert "Build the **Invoice UI** page" in brief
     assert "**Page tables:** 1" in brief

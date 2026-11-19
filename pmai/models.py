@@ -2,7 +2,7 @@
 
 A project is a collection of tables.  Menu tables describe navigation, field
 tables describe modal / database models, and page tables describe screens built
-from reusable UI components (buttons, tables, and headings).  Rows may
+from reusable UI components (buttons, inputs, tables, and tabs).  Rows may
 optionally point to another table, which is what the diagram arrows represent.
 """
 
@@ -25,18 +25,22 @@ COMPONENT_TYPES: tuple[str, ...] = (
     "Button",
     "TextBox",
     "Text Area",
+    "DropDown",
+    "Radio Button",
+    "Checkbox",
+    "Toggle",
+    "Date Picker",
+    "Number Input",
+    "Search",
+    "Slider",
+    "File Upload",
     "Table",
     "Tabs",
-    "H1",
-    "H2",
-    "H3",
-    "H4",
-    "H5",
-    "H6",
 )
 
 _COMPONENT_TYPE_LOOKUP = {value.lower(): value for value in COMPONENT_TYPES}
 _COMPONENT_TYPE_ALIASES = {
+    "btn": "Button",
     "text box": "TextBox",
     "text-box": "TextBox",
     "textbox input": "TextBox",
@@ -47,18 +51,54 @@ _COMPONENT_TYPE_ALIASES = {
     "multiline": "Text Area",
     "multi-line": "Text Area",
     "multiline text": "Text Area",
-    "heading 1": "H1",
-    "heading 2": "H2",
-    "heading 3": "H3",
-    "heading 4": "H4",
-    "heading 5": "H5",
-    "heading 6": "H6",
-    "h1 heading": "H1",
-    "h2 heading": "H2",
-    "h3 heading": "H3",
-    "h4 heading": "H4",
-    "h5 heading": "H5",
-    "h6 heading": "H6",
+    "dropdown": "DropDown",
+    "drop down": "DropDown",
+    "drop-down": "DropDown",
+    "select": "DropDown",
+    "select menu": "DropDown",
+    "combo box": "DropDown",
+    "combobox": "DropDown",
+    "radio": "Radio Button",
+    "radio-button": "Radio Button",
+    "radiobutton": "Radio Button",
+    "option button": "Radio Button",
+    "option group": "Radio Button",
+    "check box": "Checkbox",
+    "check-box": "Checkbox",
+    "tick box": "Checkbox",
+    "tickbox": "Checkbox",
+    "switch": "Toggle",
+    "toggle switch": "Toggle",
+    "on/off switch": "Toggle",
+    "date": "Date Picker",
+    "date-picker": "Date Picker",
+    "datepicker": "Date Picker",
+    "date input": "Date Picker",
+    "date field": "Date Picker",
+    "calendar": "Date Picker",
+    "number": "Number Input",
+    "number-input": "Number Input",
+    "numeric": "Number Input",
+    "numeric input": "Number Input",
+    "spin box": "Number Input",
+    "spinbox": "Number Input",
+    "stepper": "Number Input",
+    "search box": "Search",
+    "searchbox": "Search",
+    "search bar": "Search",
+    "searchbar": "Search",
+    "search field": "Search",
+    "search input": "Search",
+    "range": "Slider",
+    "range slider": "Slider",
+    "range input": "Slider",
+    "file": "File Upload",
+    "file-upload": "File Upload",
+    "upload": "File Upload",
+    "uploader": "File Upload",
+    "file input": "File Upload",
+    "file picker": "File Upload",
+    "file uploader": "File Upload",
     "grid": "Table",
     "datatable": "Table",
     "data table": "Table",
@@ -67,6 +107,29 @@ _COMPONENT_TYPE_ALIASES = {
     "tab group": "Tabs",
     "tab set": "Tabs",
     "tabbed view": "Tabs",
+}
+
+# Headings were removed from the component palette; keep old projects readable
+# by loading them as a single-line text input instead of losing the row.
+_LEGACY_COMPONENT_TYPE_ALIASES = {
+    "h1": "TextBox",
+    "h2": "TextBox",
+    "h3": "TextBox",
+    "h4": "TextBox",
+    "h5": "TextBox",
+    "h6": "TextBox",
+    "heading 1": "TextBox",
+    "heading 2": "TextBox",
+    "heading 3": "TextBox",
+    "heading 4": "TextBox",
+    "heading 5": "TextBox",
+    "heading 6": "TextBox",
+    "h1 heading": "TextBox",
+    "h2 heading": "TextBox",
+    "h3 heading": "TextBox",
+    "h4 heading": "TextBox",
+    "h5 heading": "TextBox",
+    "h6 heading": "TextBox",
 }
 
 FIELD_TYPES: tuple[str, ...] = (
@@ -144,16 +207,22 @@ def normalize_kind(value: Any) -> str:
 
 def is_component_type(value: Any) -> bool:
     text = str(value or "").strip().lower()
-    return text in _COMPONENT_TYPE_LOOKUP or text in _COMPONENT_TYPE_ALIASES
+    return (
+        text in _COMPONENT_TYPE_LOOKUP
+        or text in _COMPONENT_TYPE_ALIASES
+        or text in _LEGACY_COMPONENT_TYPE_ALIASES
+    )
 
 
 def normalize_component_type(value: Any, default: str = "Button") -> str:
-    """Return a canonical component type, tolerating case and heading aliases."""
+    """Return a canonical component type, tolerating common spelling aliases."""
     text = str(value or "").strip().lower()
     if text in _COMPONENT_TYPE_LOOKUP:
         return _COMPONENT_TYPE_LOOKUP[text]
     if text in _COMPONENT_TYPE_ALIASES:
         return _COMPONENT_TYPE_ALIASES[text]
+    if text in _LEGACY_COMPONENT_TYPE_ALIASES:
+        return _LEGACY_COMPONENT_TYPE_ALIASES[text]
     return default
 
 

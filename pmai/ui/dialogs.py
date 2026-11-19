@@ -312,10 +312,7 @@ class TableDialog(BaseDialog):
             self.kind_hint.configure(text="Every row is a navigation item (Menu).")
         elif self._kind == COMPONENTS:
             self.kind_hint.configure(
-                text=(
-                    "Each component is one of: Button, TextBox, Text Area, Table, "
-                    "Tabs, or H1\u2013H6."
-                )
+                text="Components: " + ", ".join(COMPONENT_TYPES) + "."
             )
         else:
             self.kind_hint.configure(text="Rows are database fields or modal inputs.")
@@ -626,7 +623,7 @@ class RowDialog(BaseDialog):
         if self.table_kind == MENU:
             type_hint = "All rows in a menu table are Menu items."
         elif self.table_kind == COMPONENTS:
-            type_hint = "Button, TextBox, Text Area, Table, Tabs, or H1\u2013H6."
+            type_hint = "Component type: " + ", ".join(COMPONENT_TYPES) + "."
         else:
             type_hint = "Pick a type or type a custom one."
         tk.Label(

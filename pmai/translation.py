@@ -120,8 +120,10 @@ def build_ai_brief(
     out.append(
         "6. **Page tables** describe screens built from reusable UI components. "
         "Every row is one component, typed as `Button`, `TextBox`, `Text Area`, "
-        "`Table`, `Tabs`, or `H1`–`H6`. `H1` is the largest heading and `H6` the "
-        "smallest; build them as real semantic heading levels."
+        "`DropDown`, `Radio Button`, `Checkbox`, `Toggle`, `Date Picker`, "
+        "`Number Input`, `Search`, `Slider`, `File Upload`, `Table`, or `Tabs`. "
+        "Build the matching interactive control with accessible labels and "
+        "validation where relevant."
     )
     out.append(
         "7. Follow every table note and row note exactly. Notes may add behavior, "
@@ -274,7 +276,7 @@ def build_ai_brief(
     for table in page_tables:
         out.append(
             f"- [ ] Build the **{_inline(table.name)}** page and add every listed "
-            "Button, text input, Table, Tabs, and heading at the correct hierarchy."
+            "button, input, choice control, table, and tab in the intended order."
         )
     if links:
         out.append(

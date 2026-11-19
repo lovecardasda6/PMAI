@@ -16,7 +16,7 @@ Every card on the canvas is a table. Tables describe one part of the app.
 | --- | --- | --- | --- |
 | **Menu** | Sidebar entries, navigation, nested pages | `Menu` (fixed) | Amber `MENU` |
 | **Data fields** | Database models, forms, modals, detail views | 24 field types plus custom text | Blue `FIELDS` |
-| **Page** | Screens made of reusable UI blocks and headings | `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, `H1`–`H6` | Teal `PAGE` |
+| **Page** | Screens made of reusable UI blocks and form controls | `Button`, `TextBox`, `Text Area`, `DropDown`, `Radio Button`, `Checkbox`, `Toggle`, `Date Picker`, `Number Input`, `Search`, `Slider`, `File Upload`, `Table`, `Tabs` | Teal `PAGE` |
 
 You can change a table's kind at any time. PMAI asks before converting existing
 rows and keeps all row links.
@@ -30,20 +30,29 @@ Page tables use a fixed, read-only type picker:
 | `Button` | An interactive action such as Save, Submit, or New invoice |
 | `TextBox` | A single-line text input |
 | `Text Area` | A multi-line text input for notes, descriptions, or messages |
+| `DropDown` | A select menu for choosing one option from a list |
+| `Radio Button` | A single choice from a small set of visible options |
+| `Checkbox` | One or more independent on/off choices |
+| `Toggle` | A switch for an immediate on/off setting |
+| `Date Picker` | A calendar or date input |
+| `Number Input` | A numeric field with optional stepper controls |
+| `Search` | A search box with a query input and submit affordance |
+| `Slider` | A range control for choosing a value on a scale |
+| `File Upload` | A file picker or drop zone for attachments |
 | `Table` | A data grid, list, or results table |
 | `Tabs` | A tab bar or tabbed section for switching views |
-| `H1` | The largest page heading |
-| `H2` | Section heading |
-| `H3` | Subsection heading |
-| `H4`–`H6` | Deeper heading levels |
 
 This keeps page diagrams predictable. The AI brief tells the receiving assistant
-to build real semantic heading levels and to treat buttons, text inputs, tables,
-and tabs as actual UI elements, not just labels.
+to build the matching interactive control with accessible labels, keyboard
+support, and validation where relevant — not just static labels.
 
 Hand-edited project files are repaired automatically. For example, `button`,
-`text box`, `textarea`, `heading 1`, `data table`, and `tab bar` become
-`Button`, `TextBox`, `Text Area`, `H1`, `Table`, and `Tabs`.
+`text box`, `textarea`, `drop-down`, `option button`, `check box`, `switch`,
+`calendar`, `spinbox`, `search bar`, `range slider`, `file picker`, `data table`,
+and `tab bar` become `Button`, `TextBox`, `Text Area`, `DropDown`, `Radio Button`,
+`Checkbox`, `Toggle`, `Date Picker`, `Number Input`, `Search`, `Slider`,
+`File Upload`, `Table`, and `Tabs`. Older files that used `H1`–`H6` or
+`heading 1`–`heading 6` load those rows as `TextBox` components.
 
 ## Field types
 
@@ -92,8 +101,8 @@ It contains:
    notes, and links.
 3. **Menu tables** — every navigation item, type, note, and target.
 4. **Modal / database-field tables** — every field, type, note, and target.
-5. **Page tables** — every Button, TextBox, Text Area, Table, Tabs, and heading
-   with its level, notes, and target.
+5. **Page tables** — every button, text input, choice control, table, and tab
+   with its notes and target.
 6. **Link map** — source table, source row, target table, and target kind.
 7. **Build checklist** — ordered implementation tasks derived from the diagram.
 
@@ -135,7 +144,9 @@ across saves.
 ## What's new in 1.1
 
 - New **Page** table kind.
-- New `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, and `H1`–`H6` row types.
+- New component row types: `Button`, `TextBox`, `Text Area`, `DropDown`,
+  `Radio Button`, `Checkbox`, `Toggle`, `Date Picker`, `Number Input`, `Search`,
+  `Slider`, `File Upload`, `Table`, and `Tabs`.
 - New `Enum` and `DropDown` data field types.
 - Page cards, counts, editor hints, normalization, and AI-brief support.
 - Project format version 2, with backward-compatible loading of version 1 files.

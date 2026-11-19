@@ -75,14 +75,17 @@ TYPE_COLORS: dict[str, tuple[str, str]] = {
     "Button": ("#4338CA", "#EEF2FF"),
     "TextBox": ("#0E7490", "#ECFEFF"),
     "Text Area": ("#155E75", "#E0F2FE"),
+    "DropDown": ("#0369A1", "#F0F9FF"),
+    "Radio Button": ("#7C3AED", "#F5F3FF"),
+    "Checkbox": ("#4338CA", "#EEF2FF"),
+    "Toggle": ("#0F766E", "#F0FDFA"),
+    "Date Picker": ("#C2410C", "#FFF5EB"),
+    "Number Input": ("#047857", "#ECFDF5"),
+    "Search": ("#0E7490", "#ECFEFF"),
+    "Slider": ("#BE185D", "#FDF2F8"),
+    "File Upload": ("#6D28D9", "#F5F3FF"),
     "Table": ("#0F766E", "#E6FFFA"),
     "Tabs": ("#BE185D", "#FDF2F8"),
-    "H1": ("#6D28D9", "#F5F3FF"),
-    "H2": ("#7C3AED", "#F5F3FF"),
-    "H3": ("#8B5CF6", "#FAF5FF"),
-    "H4": ("#9333EA", "#FAF5FF"),
-    "H5": ("#A855F7", "#FDF4FF"),
-    "H6": ("#C026D3", "#FDF4FF"),
 }
 DEFAULT_TYPE_COLORS = ("#5B6880", "#F1F4F8")
 

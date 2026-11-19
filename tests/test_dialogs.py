@@ -83,7 +83,7 @@ def test_table_dialog_creates_component_table(root):
         Row(name="Notes", type="textarea"),
         Row(name="Invoices", type="Table"),
         Row(name="Settings", type="tab bar"),
-        Row(name="Billing", type="h2"),
+        Row(name="Country", type="drop down"),
     ]
 
     dialog._submit()
@@ -97,7 +97,7 @@ def test_table_dialog_creates_component_table(root):
         "Text Area",
         "Table",
         "Tabs",
-        "H2",
+        "DropDown",
     ]
 
 
@@ -163,11 +163,11 @@ def test_row_dialog_offers_component_types(root):
     assert str(dialog.type_widget.cget("state")) == "readonly"
 
     dialog.name_var.set("Section title")
-    dialog.type_var.set("H4")
+    dialog.type_var.set("Radio Button")
     dialog._submit()
 
     assert dialog.result is not None
-    assert dialog.result.type == "H4"
+    assert dialog.result.type == "Radio Button"
 
 
 def test_row_dialog_falls_back_to_button_for_unknown_component_type(root):

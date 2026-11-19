@@ -7,12 +7,22 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Added
+
+- **Input component types.** Page tables can now use `DropDown`,
+  `Radio Button`, `Checkbox`, `Toggle`, `Date Picker`, `Number Input`, `Search`,
+  `Slider`, and `File Upload` alongside `Button`, `TextBox`, `Text Area`,
+  `Table`, and `Tabs`. Canvas chips, editor hints, and the AI brief describe the
+  matching interactive controls.
+
 ### Changed
 
 - Renamed the **Components** table kind to **Page**. Page tables now use
   **+ Add Component**, a **Components** column list, and component-specific
   labels in the editors, canvas, status bar, and AI brief. Existing project
   files open unchanged.
+- Removed the `H1`–`H6` heading component types. Older projects that contain
+  heading rows load them as `TextBox` components so no data is lost.
 
 ## [1.1.0] - 2026-11-18
 

@@ -964,8 +964,10 @@ class MainWindow(tk.Tk):
             (
                 "Menu tables only allow Menu rows. Data-field tables let you pick a "
                 "field type or type a custom one (Text, DateTime, Currency, "
-                "Reference\u2026). Page tables use + Add Component with Button, "
-                "TextBox, Text Area, Table, Tabs, or H1\u2013H6.\n\n",
+                "Reference\u2026). Page tables offer + Add Component with buttons, "
+                "text fields, drop-downs, radio buttons, checkboxes, toggles, date "
+                "and number inputs, search, sliders, file uploads, tables, and "
+                "tabs.\n\n",
                 None,
             ),
             ("3. Link a row or component to a table\n", "h"),

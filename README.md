@@ -33,8 +33,9 @@ runtime Python packages.
 ## What's new in 1.1
 
 - **New Page table kind** for screens built from reusable UI building blocks.
-- **New component types:** `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`,
-  and heading levels `H1`–`H6`.
+- **New component types:** `Button`, `TextBox`, `Text Area`, `DropDown`,
+  `Radio Button`, `Checkbox`, `Toggle`, `Date Picker`, `Number Input`, `Search`,
+  `Slider`, `File Upload`, `Table`, and `Tabs`.
 - **New data field types:** `Enum` and `DropDown`.
 - Page tables appear on the canvas, in the status bar, and in the AI brief.
 - Project format version 2; version 1 projects still open normally.
@@ -47,7 +48,7 @@ See [CHANGELOG.md](CHANGELOG.md) for details.
 - **Three table kinds** — Menu, Data fields, and Page.
 - **Rows with three columns** — Name, Type, and Notes. Tables also have notes
   that appear under the card.
-- **35 built-in row types** — 24 database/field types plus 11 component types,
+- **38 built-in row types** — 24 database/field types plus 14 component types,
   with free-form custom types for field tables.
 - **Visible links** — point a row at another table to draw an arrow. Use *Link
   rows* mode, the row editor, or the right-click menu.
@@ -71,15 +72,16 @@ See [CHANGELOG.md](CHANGELOG.md) for details.
 | --- | --- | --- |
 | **Menu** | Sidebar entries and navigation | `Menu` |
 | **Data fields** | Database models, modals, and forms | 24 field types or custom |
-| **Page** | Screens built from reusable UI pieces and headings | `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, `H1`–`H6` |
+| **Page** | Screens built from reusable UI controls | `Button`, `TextBox`, `Text Area`, `DropDown`, `Radio Button`, `Checkbox`, `Toggle`, `Date Picker`, `Number Input`, `Search`, `Slider`, `File Upload`, `Table`, `Tabs` |
 
 Field types include Text, Long Text, Number, Integer, Decimal, Currency, Boolean,
 Date, Time, DateTime, Email, Phone, URL, Select, Multi Select, Enum, DropDown,
 Auto ID, Reference, File, Image, Password, JSON, and Formula.
 
-Component types are intentionally fixed so hierarchy stays consistent. The AI
-brief instructs the receiving assistant to use real semantic heading levels and
-to treat buttons, text inputs, and tables as actual UI elements.
+Component types are intentionally fixed so page layouts stay consistent. The AI
+brief instructs the receiving assistant to build real interactive controls —
+drop-downs, radio buttons, checkboxes, toggles, date and number inputs, sliders,
+search, and file uploads — with accessible labels and validation.
 
 Read [FEATURES.md](FEATURES.md) for the complete feature tour.
 
@@ -145,8 +147,9 @@ launch check:
 3. Add rows or components:
    - Menu rows are always type `Menu`.
    - Field rows can use a built-in type or any custom type you type.
-   - Page tables use **+ Add Component** with `Button`, `TextBox`, `Text Area`,
-     `Table`, `Tabs`, or `H1`–`H6`.
+   - Page tables use **+ Add Component** with buttons, text fields,
+     drop-downs, radio buttons, checkboxes, toggles, date and number inputs,
+     search, sliders, file uploads, tables, and tabs.
 4. To draw an arrow, select **Link rows** (`Ctrl+L`), click a row, then click the
    target table. You can also edit a row and choose **Links to table**, or use
    the right-click menu.
@@ -186,8 +189,8 @@ The generated Markdown contains:
    must be read.
 3. **Menu tables (navigation)** — each item with type, notes, and target.
 4. **Modal / database-field tables** — each field with type, notes, and target.
-5. **Page tables (UI screens)** — each Button, TextBox, Text Area, Table, Tabs,
-   and heading with its level, notes, and target.
+5. **Page tables (UI screens)** — every button, text input, choice control,
+   table, and tab with its notes and target.
 6. **Link map** — source table, source row, target table, target kind.
 7. **Build checklist** — ordered implementation tasks derived from the diagram.
 
