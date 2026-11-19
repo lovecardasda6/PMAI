@@ -10,7 +10,7 @@ from tkinter import filedialog, messagebox, ttk
 
 from .. import APP_NAME, APP_TAGLINE, __version__
 from ..layout import auto_layout
-from ..models import Project, Table
+from ..models import COMPONENTS, Project, Table
 from ..sample import build_sample_project
 from ..storage import PROJECT_FILTERS, ProjectFileError, load_project, save_project
 from ..translation import build_ai_brief, default_brief_filename
@@ -491,12 +491,12 @@ class MainWindow(tk.Tk):
         rows = "row" if row_count == 1 else "rows"
         menu = len(self.project.menu_tables())
         fields = len(self.project.field_tables())
-        components = len(self.project.component_tables())
-        component_word = "component" if components == 1 else "components"
+        pages = len(self.project.page_tables())
+        page_word = "page" if pages == 1 else "pages"
         self.counts_label.configure(
             text=(
                 f"{table_count} {tables}  \u00b7  {row_count} {rows}  \u00b7  "
-                f"{menu} menu / {fields} fields / {components} {component_word}"
+                f"{menu} menu / {fields} fields / {pages} {page_word}"
             )
         )
 
@@ -641,8 +641,10 @@ class MainWindow(tk.Tk):
         self.view.selected_row_id = None
         self.view.ensure_visible(table.id)
         self._update_counts()
+        noun = "component" if table.kind == COMPONENTS else "row"
+        plural = f"{noun}s"
         self.set_status(
-            f"Created table \u201c{table.name}\u201d with {len(table.rows)} row(s).",
+            f"Created table \u201c{table.name}\u201d with {len(table.rows)} {plural}.",
             "success",
             timeout=3500,
         )
@@ -690,12 +692,13 @@ class MainWindow(tk.Tk):
         if not table or not row:
             return
         targets = [t for t in self.project.tables if t.id != table.id]
+        noun = "component" if table.kind == COMPONENTS else "row"
         dialog = RowDialog(
             self,
             row=row.clone(),
             table_kind=table.kind,
             targets=targets,
-            title="Edit row",
+            title=f"Edit {noun}",
         )
         result = dialog.show()
         if result is None:
@@ -716,7 +719,7 @@ class MainWindow(tk.Tk):
         self.view.selected_table_id = table.id
         self.view.selected_row_id = result.id
         self._update_counts()
-        self.set_status(f"Updated row \u201c{result.name}\u201d.", "success", timeout=3000)
+        self.set_status(f"Updated {noun} \u201c{result.name}\u201d.", "success", timeout=3000)
         self.view.focus_set()
 
     def set_row_link(self, table_id: str, row_id: str, target_id: str | None) -> bool:
@@ -785,10 +788,12 @@ class MainWindow(tk.Tk):
             for row in source.rows
             if row.link_table_id == table_id
         )
+        noun = "component" if table.kind == COMPONENTS else "row"
+        plural = f"{noun}s"
         message = (
             f"Delete \u201c{table.name}\u201d?\n\n"
-            f"This removes {len(table.rows)} row(s) and clears {incoming} incoming link(s). "
-            "You can undo this action."
+            f"This removes {len(table.rows)} {plural} and clears {incoming} incoming "
+            "link(s). You can undo this action."
         )
         if not messagebox.askyesno("Delete table", message, parent=self):
             return
@@ -894,7 +899,8 @@ class MainWindow(tk.Tk):
         if not self.project.tables:
             messagebox.showinfo(
                 "Nothing to translate yet",
-                "Add at least one table with rows, then translate it into an AI brief.",
+                "Add at least one table with rows or components, then translate it "
+                "into an AI brief.",
                 parent=self,
             )
             return
@@ -909,7 +915,7 @@ class MainWindow(tk.Tk):
         if not self.project.tables:
             messagebox.showinfo(
                 "Nothing to translate yet",
-                "Add at least one table with rows before exporting a brief.",
+                "Add at least one table with rows or components before exporting a brief.",
                 parent=self,
             )
             return
@@ -936,8 +942,8 @@ class MainWindow(tk.Tk):
             ("Draw first, build later\n", "h"),
             (
                 "PMAI is an offline sketchpad for app structure. Build a diagram of "
-                "menus, data fields, and UI components, then translate it into a "
-                "brief an AI can follow.\n\n",
+                "menus, data fields, and pages of UI components, then translate it "
+                "into a brief an AI can follow.\n\n",
                 None,
             ),
             ("Start with a project\n", "h"),
@@ -949,19 +955,19 @@ class MainWindow(tk.Tk):
             ("1. Add a table\n", "h"),
             (
                 "Choose Menu for navigation, Data fields for a modal / database "
-                "model, or Components for reusable UI pieces. Give it a name and "
-                "optional notes. Every row has a name, type and notes.\n\n",
+                "model, or Page for a screen built from UI components. Give it a "
+                "name and optional notes. Every row has a name, type and notes.\n\n",
                 None,
             ),
-            ("2. Add rows\n", "h"),
+            ("2. Add rows or components\n", "h"),
             (
                 "Menu tables only allow Menu rows. Data-field tables let you pick a "
                 "field type or type a custom one (Text, DateTime, Currency, "
-                "Reference\u2026). Component tables use Button, TextBox, Text Area, "
-                "Table, Tabs, or H1\u2013H6.\n\n",
+                "Reference\u2026). Page tables use + Add Component with Button, "
+                "TextBox, Text Area, Table, Tabs, or H1\u2013H6.\n\n",
                 None,
             ),
-            ("3. Link a row to a table\n", "h"),
+            ("3. Link a row or component to a table\n", "h"),
             (
                 "Use the Link rows tool, then click a row and then the target table. "
                 "You can also right-click a row or edit it and choose Links to table. "
@@ -1014,8 +1020,8 @@ class MainWindow(tk.Tk):
             (f"PMAI {__version__}\n", "h"),
             ("Project \u2192 Prompt\n\n", "b"),
             (
-                "PMAI turns a visual map of menus, data fields, and UI components "
-                "into a precise AI build brief. It is local, offline and "
+                "PMAI turns a visual map of menus, data fields, and pages of UI "
+                "components into a precise AI build brief. It is local, offline and "
                 "dependency-free.\n\n",
                 None,
             ),

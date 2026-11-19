@@ -101,6 +101,37 @@ def test_table_dialog_creates_component_table(root):
     ]
 
 
+def test_page_kind_uses_component_language(root):
+    dialog = TableDialog(root, Project())
+
+    assert dialog.components_button.cget("text") == "Page"
+
+    dialog._set_kind(COMPONENTS)
+
+    assert dialog.add_row_button.cget("text") == "+ Add Component"
+    assert dialog.rows_label.cget("text") == "COMPONENTS"
+    assert dialog.count_label.cget("text").endswith("components")
+    assert "No components yet" in dialog.tree_empty.cget("text")
+
+    dialog._set_kind(FIELDS)
+
+    assert dialog.add_row_button.cget("text") == "+ Add row"
+    assert dialog.rows_label.cget("text") == "ROWS"
+    assert "No rows yet" in dialog.tree_empty.cget("text")
+
+
+def test_component_row_dialog_uses_component_language(root):
+    dialog = RowDialog(
+        root, row=None, table_kind=COMPONENTS, targets=[], title="Add component"
+    )
+
+    assert dialog._primary.cget("text") == "Add component"
+
+    dialog._submit()
+
+    assert "component name" in dialog.footer_note.cget("text")
+
+
 def test_table_dialog_switch_to_components_rewrites_rows(root, monkeypatch):
     monkeypatch.setattr(
         dialogs_module.messagebox, "askyesno", lambda *args, **kwargs: True

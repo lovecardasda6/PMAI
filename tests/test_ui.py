@@ -47,7 +47,7 @@ def test_sample_project_loads(app: MainWindow):
     assert app.view.link_mode is False
 
 
-def test_component_tables_are_counted(app: MainWindow):
+def test_page_tables_are_counted(app: MainWindow):
     app.project.add_table(
         Table(name="Invoice UI", kind=COMPONENTS, rows=[Row(name="Save", type="Button")])
     )
@@ -55,7 +55,7 @@ def test_component_tables_are_counted(app: MainWindow):
 
     text = app.counts_label.cget("text")
     assert "5 tables" in text
-    assert "1 component" in text
+    assert "1 page" in text
 
 
 def test_add_table_from_dialog_and_undo(app: MainWindow, monkeypatch):

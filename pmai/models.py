@@ -1,9 +1,9 @@
 """Core data model for PMAI projects.
 
 A project is a collection of tables.  Menu tables describe navigation, field
-tables describe modal / database models, and component tables describe reusable
-UI pieces (buttons, tables, and headings).  Rows may optionally point to
-another table, which is what the diagram arrows represent.
+tables describe modal / database models, and page tables describe screens built
+from reusable UI components (buttons, tables, and headings).  Rows may
+optionally point to another table, which is what the diagram arrows represent.
 """
 
 from __future__ import annotations
@@ -99,7 +99,7 @@ FIELD_TYPES: tuple[str, ...] = (
 KIND_SHORT_LABELS = {
     MENU: "menu",
     FIELDS: "modal/fields",
-    COMPONENTS: "components",
+    COMPONENTS: "page",
 }
 
 SCHEMA_NAME = "PMAI"
@@ -201,7 +201,7 @@ class Row:
 
 @dataclass
 class Table:
-    """A menu table, a modal/database-field table, or a component table."""
+    """A menu table, a modal/database-field table, or a page table."""
 
     id: str = field(default_factory=lambda: new_id("tbl"))
     name: str = "Untitled table"
@@ -294,8 +294,12 @@ class Project:
     def field_tables(self) -> list[Table]:
         return [t for t in self.tables if t.kind == FIELDS]
 
-    def component_tables(self) -> list[Table]:
+    def page_tables(self) -> list[Table]:
         return [t for t in self.tables if t.kind == COMPONENTS]
+
+    def component_tables(self) -> list[Table]:
+        """Backward-compatible alias for :meth:`page_tables`."""
+        return self.page_tables()
 
     def total_rows(self) -> int:
         return sum(len(t.rows) for t in self.tables)

@@ -109,7 +109,7 @@ def test_component_kind_and_types_are_normalized():
         "H3",
         "Button",
     ]
-    assert project.component_tables() == [table]
+    assert project.page_tables() == [table]
     assert normalize_kind("ui components") == COMPONENTS
     assert normalize_component_type("HEADING 6") == "H6"
     assert normalize_component_type("text box") == "TextBox"
@@ -154,7 +154,7 @@ def test_brief_contains_tables_links_and_notes():
     assert "Do **not** invent menu items" in brief
 
 
-def test_brief_contains_component_tables():
+def test_brief_contains_page_tables():
     components = Table(
         name="Invoice UI",
         kind=COMPONENTS,
@@ -173,7 +173,7 @@ def test_brief_contains_component_tables():
         Project(name="Components Demo", tables=[components])
     )
 
-    assert "## 5. Component tables (UI building blocks)" in brief
+    assert "## 5. Page tables (UI screens)" in brief
     assert "| Component | Type | Notes | Links to |" in brief
     assert "New invoice" in brief
     assert "| Customer name | TextBox |" in brief
@@ -181,8 +181,8 @@ def test_brief_contains_component_tables():
     assert "| Settings | Tabs |" in brief
     assert "| Billing | H1 |" in brief
     assert "## 6. Link map (drawing arrows)" in brief
-    assert "Build the **Invoice UI** component table" in brief
-    assert "**Component tables:** 1" in brief
+    assert "Build the **Invoice UI** page" in brief
+    assert "**Page tables:** 1" in brief
 
 
 def test_brief_empty_project():

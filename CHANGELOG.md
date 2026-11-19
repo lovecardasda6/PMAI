@@ -7,7 +7,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
-Nothing yet.
+### Changed
+
+- Renamed the **Components** table kind to **Page**. Page tables now use
+  **+ Add Component**, a **Components** column list, and component-specific
+  labels in the editors, canvas, status bar, and AI brief. Existing project
+  files open unchanged.
 
 ## [1.1.0] - 2026-11-18
 

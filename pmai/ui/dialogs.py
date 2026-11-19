@@ -54,7 +54,7 @@ def _format_timestamp(value: str) -> str:
 
 
 class TableDialog(BaseDialog):
-    """Create or edit a menu, database-field, or component table."""
+    """Create or edit a menu, database-field, or page table."""
 
     def __init__(self, parent, project: Project, table: Table | None = None):
         creating = table is None
@@ -63,8 +63,7 @@ class TableDialog(BaseDialog):
         self.rows = [row.clone() for row in self._table.rows]
         title = "New table" if creating else "Edit table"
         subtitle = (
-            "Define navigation, a data model, or reusable UI components, "
-            "then add its rows."
+            "Define navigation, a data model, or a UI page with its components."
         )
         super().__init__(
             parent,
@@ -87,7 +86,7 @@ class TableDialog(BaseDialog):
             variant="primary",
             weight="bold",
         )
-        self.footer_note.configure(text="Tip: link a row to another table to draw an arrow.")
+        self._update_kind_buttons()
         self.protocol("WM_DELETE_WINDOW", self._cancel)
         self.bind("<Control-Return>", lambda _e: self._submit())
 
@@ -130,7 +129,7 @@ class TableDialog(BaseDialog):
         self.fields_button.grid(row=0, column=1, sticky="ew", padx=4)
         self.components_button = FlatButton(
             toggle,
-            text="Components",
+            text="Page",
             command=lambda: self._set_kind("components"),
             padx=14,
             pady=6,
@@ -164,7 +163,8 @@ class TableDialog(BaseDialog):
 
         rows_head = tk.Frame(content, bg=theme.BG)
         rows_head.pack(fill="x", pady=(14, 6))
-        field_label(rows_head, "Rows").pack(side="left")
+        self.rows_label = field_label(rows_head, "Rows")
+        self.rows_label.pack(side="left")
         self.count_label = tk.Label(
             rows_head,
             text="",
@@ -262,11 +262,21 @@ class TableDialog(BaseDialog):
     def focus_first(self) -> None:
         self.name_entry.focus_set()
 
+    def _entry_noun(self, plural: bool = False) -> str:
+        """What one entry in this table kind is called."""
+        if self._kind == COMPONENTS:
+            return "components" if plural else "component"
+        return "rows" if plural else "row"
+
+    def _entry_label(self) -> str:
+        """Button-style name for one entry in this table kind."""
+        return "Component" if self._kind == COMPONENTS else "row"
+
     def _kind_name(self) -> str:
         return {
             MENU: "Menu",
             FIELDS: "Data fields",
-            COMPONENTS: "Components",
+            COMPONENTS: "Page",
         }.get(self._kind, "Data fields")
 
     def _update_kind_buttons(self) -> None:
@@ -276,12 +286,29 @@ class TableDialog(BaseDialog):
             (COMPONENTS, self.components_button),
         ):
             button.set_variant("primary" if self._kind == kind else "ghost")
+
+        noun = self._entry_noun()
+        label = self._entry_label()
+        plural = self._entry_noun(plural=True)
+        self.rows_label.configure(text=plural.upper())
+        self.add_row_button.configure(text=f"+ Add {label}")
+        self.tree_empty.configure(
+            text=(
+                f"No {plural} yet\n"
+                f"Click \u201c+ Add {label}\u201d to add the first one."
+            )
+        )
+        if getattr(self, "footer_note", None) is not None:
+            self.footer_note.configure(
+                text=f"Tip: link a {noun} to another table to draw an arrow."
+            )
+
         if self._kind == MENU:
             self.kind_hint.configure(text="Every row is a navigation item (Menu).")
         elif self._kind == COMPONENTS:
             self.kind_hint.configure(
                 text=(
-                    "Rows are UI components: Button, TextBox, Text Area, Table, "
+                    "Each component is one of: Button, TextBox, Text Area, Table, "
                     "Tabs, or H1\u2013H6."
                 )
             )
@@ -295,8 +322,8 @@ class TableDialog(BaseDialog):
             converts = [row for row in self.rows if row.type != MENU_ROW]
             if converts and not messagebox.askyesno(
                 "Change table kind?",
-                f"All {len(converts)} row(s) will become Menu navigation items. "
-                "Links are kept.\n\nContinue?",
+                f"All {len(converts)} {self._entry_noun(plural=True)} will become "
+                "Menu navigation items. Links are kept.\n\nContinue?",
                 parent=self,
             ):
                 return
@@ -305,8 +332,8 @@ class TableDialog(BaseDialog):
         elif kind == COMPONENTS:
             if self.rows and not messagebox.askyesno(
                 "Change table kind?",
-                f"All {len(self.rows)} row(s) will become Button components. "
-                "Links are kept.\n\nContinue?",
+                f"All {len(self.rows)} {self._entry_noun(plural=True)} will become "
+                "Button components. Links are kept.\n\nContinue?",
                 parent=self,
             ):
                 return
@@ -320,7 +347,7 @@ class TableDialog(BaseDialog):
             ]
             if converts and not messagebox.askyesno(
                 "Change table kind?",
-                f"{len(converts)} menu/component row(s) will become Text fields. "
+                f"{len(converts)} menu or component entries will become Text fields. "
                 "Links are kept.\n\nContinue?",
                 parent=self,
             ):
@@ -361,9 +388,7 @@ class TableDialog(BaseDialog):
                 ),
                 tags=("odd",) if index % 2 else (),
             )
-        self.count_label.configure(
-            text=f"{len(self.rows)} row{'s' if len(self.rows) != 1 else ''}"
-        )
+        self.count_label.configure(text=f"{len(self.rows)} {self._entry_noun(plural=True)}")
         if self.rows:
             self.tree_empty.place_forget()
             ids = [row.id for row in self.rows]
@@ -396,25 +421,28 @@ class TableDialog(BaseDialog):
         return [t for t in self.project.tables if t.id != self._table.id]
 
     def _row_dialog(self, row: Row | None) -> RowDialog:
+        noun = self._entry_noun()
         return RowDialog(
             self,
             row=row,
             table_kind=self._kind,
             targets=self._targets(),
-            title="Add row" if row is None else "Edit row",
+            title=f"Add {noun}" if row is None else f"Edit {noun}",
         )
 
     def _add_row(self) -> None:
+        noun = self._entry_noun()
         row = self._row_dialog(None).show()
         if row is not None:
             self.rows.append(row)
             self._refresh_rows(select_id=row.id)
-            self._show_note(f"Added row \u201c{row.name}\u201d.")
+            self._show_note(f"Added {noun} \u201c{row.name}\u201d.")
 
     def _edit_row(self) -> None:
+        noun = self._entry_noun()
         row = self._selected_row()
         if row is None:
-            self._show_note("Select a row to edit first.")
+            self._show_note(f"Select a {noun} to edit first.")
             return
         updated = self._row_dialog(row.clone()).show()
         if updated is not None:
@@ -423,12 +451,13 @@ class TableDialog(BaseDialog):
                     self.rows[index] = updated
                     break
             self._refresh_rows(select_id=updated.id)
-            self._show_note(f"Updated row \u201c{updated.name}\u201d.")
+            self._show_note(f"Updated {noun} \u201c{updated.name}\u201d.")
 
     def _duplicate_row(self) -> None:
+        noun = self._entry_noun()
         row = self._selected_row()
         if row is None:
-            self._show_note("Select a row to duplicate first.")
+            self._show_note(f"Select a {noun} to duplicate first.")
             return
         clone = row.clone()
         clone.id = new_id("row")
@@ -436,12 +465,13 @@ class TableDialog(BaseDialog):
         index = self.rows.index(row)
         self.rows.insert(index + 1, clone)
         self._refresh_rows(select_id=clone.id)
-        self._show_note("Row duplicated.")
+        self._show_note(f"{noun.capitalize()} duplicated.")
 
     def _remove_row(self) -> None:
+        noun = self._entry_noun()
         row = self._selected_row()
         if row is None:
-            self._show_note("Select a row to remove first.")
+            self._show_note(f"Select a {noun} to remove first.")
             return
         index = self.rows.index(row)
         self.rows.pop(index)
@@ -450,9 +480,10 @@ class TableDialog(BaseDialog):
         self._show_note(f"Removed \u201c{row.name}\u201d. Cancel to undo this edit.")
 
     def _move_row(self, direction: int) -> None:
+        noun = self._entry_noun()
         row = self._selected_row()
         if row is None:
-            self._show_note("Select a row to reorder first.")
+            self._show_note(f"Select a {noun} to reorder first.")
             return
         index = self.rows.index(row)
         new_index = index + direction
@@ -477,7 +508,7 @@ class TableDialog(BaseDialog):
                 return
         for row in self.rows:
             if not row.name.strip():
-                self._show_note("Every row needs a name.", "error")
+                self._show_note(f"Every {self._entry_noun()} needs a name.", "error")
                 return
             if self._kind == MENU:
                 row.type = MENU_ROW
@@ -496,7 +527,7 @@ class TableDialog(BaseDialog):
 
 
 class RowDialog(BaseDialog):
-    """Add or edit one menu item / field / component row."""
+    """Add or edit one menu item, field, or page component."""
 
     def __init__(
         self,
@@ -509,6 +540,7 @@ class RowDialog(BaseDialog):
     ):
         self.table_kind = table_kind
         self.targets = targets
+        self._noun = "component" if table_kind == COMPONENTS else "row"
         self._row = row.clone() if row else Row(name="", type=row_type_for(table_kind))
         editing = row is not None
         if table_kind == MENU:
@@ -521,13 +553,13 @@ class RowDialog(BaseDialog):
         self._build()
         self.add_footer_button("Cancel", self._cancel)
         self._primary = self.add_footer_button(
-            "Save row" if editing else "Add row",
+            f"Save {self._noun}" if editing else f"Add {self._noun}",
             self._submit,
             variant="primary",
             weight="bold",
         )
         self.footer_note.configure(
-            text="Link to table draws the arrow from this row."
+            text=f"Link to table draws the arrow from this {self._noun}."
         )
         self.bind("<Control-Return>", lambda _e: self._submit())
 
@@ -535,7 +567,9 @@ class RowDialog(BaseDialog):
         content = tk.Frame(self.body, bg=theme.BG)
         content.pack(fill="both", expand=True, padx=24, pady=(16, 8))
 
-        field_label(content, "Row name").pack(fill="x", pady=(0, 6))
+        field_label(content, f"{self._noun.capitalize()} name").pack(
+            fill="x", pady=(0, 6)
+        )
         self.name_var = tk.StringVar(value=self._row.name)
         self.name_entry = make_entry(content, self.name_var)
         self.name_entry.pack(fill="x", ipady=6)
@@ -663,7 +697,7 @@ class RowDialog(BaseDialog):
         name = self.name_var.get().strip()
         if not name:
             self.footer_note.configure(
-                text="Please enter a row name.", fg=theme.DANGER
+                text=f"Please enter a {self._noun} name.", fg=theme.DANGER
             )
             self.name_entry.focus_set()
             return

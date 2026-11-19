@@ -8,7 +8,7 @@ import tkinter.font as tkfont
 from dataclasses import dataclass
 
 from .. import cardmetrics
-from ..models import Row, Table
+from ..models import COMPONENTS, Row, Table
 from . import theme
 from .widgets import FlatButton, rounded_rect
 
@@ -19,7 +19,7 @@ ZOOM_STEP = 1.15
 KIND_PILL_LABELS = {
     "menu": "MENU",
     "fields": "FIELDS",
-    "components": "COMPONENTS",
+    "components": "PAGE",
 }
 
 
@@ -132,8 +132,8 @@ class DiagramView(tk.Canvas):
         tk.Label(
             self.empty,
             text=(
-                "Sketch menu tables, model your database fields, design UI "
-                "components, and connect rows with arrows. Translate the whole "
+                "Sketch menu tables, model your database fields, design pages of "
+                "UI components, and connect rows with arrows. Translate the whole "
                 "diagram into a precise build brief."
             ),
             bg=theme.BG,
@@ -554,7 +554,7 @@ class DiagramView(tk.Canvas):
             # type pill
             if table.kind == "menu":
                 type_text = "Menu"
-            elif table.kind == "components":
+            elif table.kind == COMPONENTS:
                 type_text = row.type or "Button"
             else:
                 type_text = row.type or "Text"
@@ -597,11 +597,13 @@ class DiagramView(tk.Canvas):
                 )
 
         after_rows = row_top + len(visible) * row_h
+        noun = "component" if table.kind == COMPONENTS else "row"
+        plural = f"{noun}s"
         if not table.rows:
             self.create_text(
                 x1 + width * z / 2,
                 after_rows + cardmetrics.EMPTY_H * z / 2,
-                text="No rows yet \u2014 double-click to add some",
+                text=f"No {plural} yet \u2014 double-click to add some",
                 fill=theme.FAINT,
                 font=theme.px_font(9.6 * z),
             )
@@ -611,7 +613,7 @@ class DiagramView(tk.Canvas):
             self.create_text(
                 x1 + width * z / 2,
                 after_rows + 14 * z,
-                text=f"+{hidden} more row{'s' if hidden != 1 else ''} \u2014 open the table to edit",
+                text=f"+{hidden} more {plural} \u2014 open the table to edit",
                 fill=theme.FAINT,
                 font=theme.px_font(9.2 * z),
             )

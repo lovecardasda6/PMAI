@@ -48,8 +48,8 @@ def _brief_empty() -> str:
         "# AI Build Brief\n\n"
         "This project does not contain any tables yet.\n\n"
         "Add a **Menu** table for navigation, a **Modal / Fields** table for a "
-        "data model, or a **Components** table for reusable UI pieces, and add "
-        "rows to describe each item. Then generate this brief again.\n"
+        "data model, or a **Page** table for a screen made of reusable UI "
+        "components, and describe each item. Then generate this brief again.\n"
     )
 
 
@@ -66,7 +66,7 @@ def build_ai_brief(
     table_lookup = {table.id: table for table in project.tables}
     menu_tables = project.menu_tables()
     field_tables = project.field_tables()
-    component_tables = project.component_tables()
+    page_tables = project.page_tables()
     roots = project.root_menu_tables()
     incoming = project.incoming_links()
 
@@ -86,7 +86,7 @@ def build_ai_brief(
         out.append(f"- **Description:** {_inline(project.description)}")
     out.append(f"- **Menu tables:** {len(menu_tables)}")
     out.append(f"- **Modal / field tables:** {len(field_tables)}")
-    out.append(f"- **Component tables:** {len(component_tables)}")
+    out.append(f"- **Page tables:** {len(page_tables)}")
     out.append(f"- **Rows total:** {project.total_rows()}")
     if roots:
         names = ", ".join(_inline(t.name) for t in roots)
@@ -111,18 +111,17 @@ def build_ai_brief(
         "(modal, drawer, or dedicated page — choose the most appropriate pattern)."
     )
     out.append(
-        "4. A menu row linked to a **components** table opens that component "
-        "view, page, or reusable block."
+        "4. A menu row linked to a **page** table opens that page."
     )
     out.append(
         "5. **Modal / fields tables** define data models and the forms that edit "
         "them. Treat each row as a field and its type as the storage/input type."
     )
     out.append(
-        "6. **Component tables** describe reusable UI building blocks. Every row "
-        "is one component, typed as `Button`, `TextBox`, `Text Area`, `Table`, "
-        "`Tabs`, or `H1`–`H6`. `H1` is the largest heading and `H6` the smallest; "
-        "build them as real semantic heading levels."
+        "6. **Page tables** describe screens built from reusable UI components. "
+        "Every row is one component, typed as `Button`, `TextBox`, `Text Area`, "
+        "`Table`, `Tabs`, or `H1`–`H6`. `H1` is the largest heading and `H6` the "
+        "smallest; build them as real semantic heading levels."
     )
     out.append(
         "7. Follow every table note and row note exactly. Notes may add behavior, "
@@ -205,16 +204,16 @@ def build_ai_brief(
         out.append("")
 
     section += 1
-    out.append(f"## {section}. Component tables (UI building blocks)")
+    out.append(f"## {section}. Page tables (UI screens)")
     out.append("")
-    if not component_tables:
-        out.append("_No component tables were defined._")
+    if not page_tables:
+        out.append("_No page tables were defined._")
         out.append("")
-    for index, table in enumerate(component_tables, start=1):
+    for index, table in enumerate(page_tables, start=1):
         links_in = incoming.get(table.id, [])
         out.append(f"### {section}.{index} {_inline(table.name) or 'Untitled table'}")
         out.append("")
-        out.append("- **Kind:** Components")
+        out.append("- **Kind:** Page")
         out.append(
             "- **Incoming links:** "
             + (
@@ -272,11 +271,10 @@ def build_ai_brief(
             f"- [ ] Create the **{_inline(table.name)}** data model, validation, "
             "list view, and create/edit form."
         )
-    for table in component_tables:
+    for table in page_tables:
         out.append(
-            f"- [ ] Build the **{_inline(table.name)}** component table and add "
-            "every listed Button, text input, Table, Tabs, and heading at the "
-            "correct hierarchy."
+            f"- [ ] Build the **{_inline(table.name)}** page and add every listed "
+            "Button, text input, Table, Tabs, and heading at the correct hierarchy."
         )
     if links:
         out.append(

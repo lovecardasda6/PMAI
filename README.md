@@ -4,9 +4,9 @@
 structure and turning that sketch into a precise Markdown brief for an AI coding
 assistant.**
 
-Draw menu tables, database fields, and reusable UI components, connect them with
-arrows, add notes, then press **Translate**. PMAI produces a structured build
-specification you can paste into any AI coding tool.
+Draw menu tables, database fields, and pages of reusable UI components, connect
+them with arrows, add notes, then press **Translate**. PMAI produces a
+structured build specification you can paste into any AI coding tool.
 
 ![PMAI screenshot](docs/screenshot.png)
 
@@ -24,7 +24,7 @@ PMAI is useful for:
 
 - Planning a new app before asking an AI to scaffold it.
 - Turning a client conversation into a concrete UI/data model.
-- Keeping a project's navigation, fields, and components in one readable file.
+- Keeping a project's navigation, fields, and pages in one readable file.
 - Producing repeatable build briefs without writing a long prompt by hand.
 
 Everything runs locally. There are no accounts, no server, no telemetry, and no
@@ -32,11 +32,11 @@ runtime Python packages.
 
 ## What's new in 1.1
 
-- **New Components table kind** for reusable UI building blocks.
+- **New Page table kind** for screens built from reusable UI building blocks.
 - **New component types:** `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`,
   and heading levels `H1`–`H6`.
 - **New data field types:** `Enum` and `DropDown`.
-- Component tables appear on the canvas, in the status bar, and in the AI brief.
+- Page tables appear on the canvas, in the status bar, and in the AI brief.
 - Project format version 2; version 1 projects still open normally.
 - Refreshed public documentation, feature list, and changelog.
 
@@ -44,7 +44,7 @@ See [CHANGELOG.md](CHANGELOG.md) for details.
 
 ## Features
 
-- **Three table kinds** — Menu, Data fields, and Components.
+- **Three table kinds** — Menu, Data fields, and Page.
 - **Rows with three columns** — Name, Type, and Notes. Tables also have notes
   that appear under the card.
 - **35 built-in row types** — 24 database/field types plus 11 component types,
@@ -71,7 +71,7 @@ See [CHANGELOG.md](CHANGELOG.md) for details.
 | --- | --- | --- |
 | **Menu** | Sidebar entries and navigation | `Menu` |
 | **Data fields** | Database models, modals, and forms | 24 field types or custom |
-| **Components** | Reusable UI pieces and headings | `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, `H1`–`H6` |
+| **Page** | Screens built from reusable UI pieces and headings | `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, `H1`–`H6` |
 
 Field types include Text, Long Text, Number, Integer, Decimal, Currency, Boolean,
 Date, Time, DateTime, Email, Phone, URL, Select, Multi Select, Enum, DropDown,
@@ -141,11 +141,12 @@ launch check:
 1. Click **New project** (`Ctrl+N`). Enter a project name and a short
    description — these become the opening of the AI brief.
 2. Click **+ Add table** (`Ctrl+T`). Choose **Menu**, **Data fields**, or
-   **Components**, enter a name, and add optional table notes.
-3. Add rows:
+   **Page**, enter a name, and add optional table notes.
+3. Add rows or components:
    - Menu rows are always type `Menu`.
    - Field rows can use a built-in type or any custom type you type.
-   - Component rows use `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, or `H1`–`H6`.
+   - Page tables use **+ Add Component** with `Button`, `TextBox`, `Text Area`,
+     `Table`, `Tabs`, or `H1`–`H6`.
 4. To draw an arrow, select **Link rows** (`Ctrl+L`), click a row, then click the
    target table. You can also edit a row and choose **Links to table**, or use
    the right-click menu.
@@ -185,8 +186,8 @@ The generated Markdown contains:
    must be read.
 3. **Menu tables (navigation)** — each item with type, notes, and target.
 4. **Modal / database-field tables** — each field with type, notes, and target.
-5. **Component tables (UI building blocks)** — each Button, TextBox, Text Area,
-   Table, Tabs, and heading with its level, notes, and target.
+5. **Page tables (UI screens)** — each Button, TextBox, Text Area, Table, Tabs,
+   and heading with its level, notes, and target.
 6. **Link map** — source table, source row, target table, target kind.
 7. **Build checklist** — ordered implementation tasks derived from the diagram.
 
@@ -310,5 +311,5 @@ apply.
 ## Status
 
 PMAI 1.1 is an early public release. The core workflow — diagram, links, notes,
-translate, save — is stable. Feedback about the new Components table kind is
+translate, save — is stable. Feedback about the new Page table kind is
 especially welcome.

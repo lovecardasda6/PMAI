@@ -1,7 +1,7 @@
 # PMAI Features
 
 PMAI (**Project → Prompt**) is a local-first desktop sketcher for app structure.
-You draw the pieces of an application — navigation, data models, and UI
+You draw the pieces of an application — navigation, data models, and pages of UI
 components — and PMAI turns that diagram into a precise Markdown brief for an AI
 coding assistant.
 
@@ -16,14 +16,14 @@ Every card on the canvas is a table. Tables describe one part of the app.
 | --- | --- | --- | --- |
 | **Menu** | Sidebar entries, navigation, nested pages | `Menu` (fixed) | Amber `MENU` |
 | **Data fields** | Database models, forms, modals, detail views | 24 field types plus custom text | Blue `FIELDS` |
-| **Components** | Reusable UI building blocks and headings | `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, `H1`–`H6` | Teal `COMPONENTS` |
+| **Page** | Screens made of reusable UI blocks and headings | `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, `H1`–`H6` | Teal `PAGE` |
 
 You can change a table's kind at any time. PMAI asks before converting existing
 rows and keeps all row links.
 
-## Component types
+## Page components
 
-Component tables use a fixed, read-only type picker:
+Page tables use a fixed, read-only type picker:
 
 | Type | Meaning |
 | --- | --- |
@@ -37,9 +37,9 @@ Component tables use a fixed, read-only type picker:
 | `H3` | Subsection heading |
 | `H4`–`H6` | Deeper heading levels |
 
-This keeps component diagrams predictable. The AI brief tells the receiving
-assistant to build real semantic heading levels and to treat buttons, text
-inputs, tables, and tabs as actual UI elements, not just labels.
+This keeps page diagrams predictable. The AI brief tells the receiving assistant
+to build real semantic heading levels and to treat buttons, text inputs, tables,
+and tabs as actual UI elements, not just labels.
 
 Hand-edited project files are repaired automatically. For example, `button`,
 `text box`, `textarea`, `heading 1`, `data table`, and `tab bar` become
@@ -88,12 +88,12 @@ It contains:
 
 1. **Project summary** — name, description, table counts, row total, top-level
    menus, and timestamp.
-2. **Interpretation rules** — how to read menus, data fields, components, notes,
-   and links.
+2. **Interpretation rules** — how to read menus, data fields, page components,
+   notes, and links.
 3. **Menu tables** — every navigation item, type, note, and target.
 4. **Modal / database-field tables** — every field, type, note, and target.
-5. **Component tables** — every Button, TextBox, Text Area, Table, Tabs, and
-   heading with its level, notes, and target.
+5. **Page tables** — every Button, TextBox, Text Area, Table, Tabs, and heading
+   with its level, notes, and target.
 6. **Link map** — source table, source row, target table, and target kind.
 7. **Build checklist** — ordered implementation tasks derived from the diagram.
 
@@ -134,10 +134,10 @@ across saves.
 
 ## What's new in 1.1
 
-- New **Components** table kind.
+- New **Page** table kind.
 - New `Button`, `TextBox`, `Text Area`, `Table`, `Tabs`, and `H1`–`H6` row types.
 - New `Enum` and `DropDown` data field types.
-- Component cards, counts, editor hints, normalization, and AI-brief support.
+- Page cards, counts, editor hints, normalization, and AI-brief support.
 - Project format version 2, with backward-compatible loading of version 1 files.
 - Expanded tests and refreshed public documentation.
 
@@ -157,5 +157,5 @@ See [CHANGELOG.md](CHANGELOG.md) for the complete list.
 - More component types (cards, alerts, navigation bars, accordions).
 - Optional row-level cross-references inside the brief.
 - Image / PDF export of the diagram.
-- A component-only starter sample project.
+- A page-only starter sample project.
 - Additional themes and accessibility settings.
