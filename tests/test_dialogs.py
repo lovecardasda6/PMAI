@@ -113,6 +113,12 @@ def test_page_kind_uses_component_language(root):
     assert dialog.count_label.cget("text").endswith("components")
     assert "No components yet" in dialog.tree_empty.cget("text")
 
+    dialog.rows = [Row(name="Save", type="Button")]
+    dialog._refresh_rows()
+    assert dialog.count_label.cget("text") == "1 component"
+
+    dialog.rows = []
+    dialog._refresh_rows()
     dialog._set_kind(FIELDS)
 
     assert dialog.add_row_button.cget("text") == "+ Add row"

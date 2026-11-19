@@ -272,6 +272,11 @@ class TableDialog(BaseDialog):
         """Button-style name for one entry in this table kind."""
         return "Component" if self._kind == COMPONENTS else "row"
 
+    def _entry_phrase(self, count: int) -> str:
+        """A count with the right singular/plural entry name."""
+        noun = self._entry_noun()
+        return f"{count} {noun}" + ("" if count == 1 else "s")
+
     def _kind_name(self) -> str:
         return {
             MENU: "Menu",
@@ -322,7 +327,7 @@ class TableDialog(BaseDialog):
             converts = [row for row in self.rows if row.type != MENU_ROW]
             if converts and not messagebox.askyesno(
                 "Change table kind?",
-                f"All {len(converts)} {self._entry_noun(plural=True)} will become "
+                f"All {self._entry_phrase(len(converts))} will become "
                 "Menu navigation items. Links are kept.\n\nContinue?",
                 parent=self,
             ):
@@ -332,7 +337,7 @@ class TableDialog(BaseDialog):
         elif kind == COMPONENTS:
             if self.rows and not messagebox.askyesno(
                 "Change table kind?",
-                f"All {len(self.rows)} {self._entry_noun(plural=True)} will become "
+                f"All {self._entry_phrase(len(self.rows))} will become "
                 "Button components. Links are kept.\n\nContinue?",
                 parent=self,
             ):
@@ -347,8 +352,9 @@ class TableDialog(BaseDialog):
             ]
             if converts and not messagebox.askyesno(
                 "Change table kind?",
-                f"{len(converts)} menu or component entries will become Text fields. "
-                "Links are kept.\n\nContinue?",
+                f"{len(converts)} menu or component "
+                f"{'entry' if len(converts) == 1 else 'entries'} will become "
+                "Text fields. Links are kept.\n\nContinue?",
                 parent=self,
             ):
                 return
@@ -388,7 +394,7 @@ class TableDialog(BaseDialog):
                 ),
                 tags=("odd",) if index % 2 else (),
             )
-        self.count_label.configure(text=f"{len(self.rows)} {self._entry_noun(plural=True)}")
+        self.count_label.configure(text=self._entry_phrase(len(self.rows)))
         if self.rows:
             self.tree_empty.place_forget()
             ids = [row.id for row in self.rows]

@@ -613,7 +613,10 @@ class DiagramView(tk.Canvas):
             self.create_text(
                 x1 + width * z / 2,
                 after_rows + 14 * z,
-                text=f"+{hidden} more {plural} \u2014 open the table to edit",
+                text=(
+                    f"+{hidden} more {noun}{'' if hidden == 1 else 's'} "
+                    "\u2014 open the table to edit"
+                ),
                 fill=theme.FAINT,
                 font=theme.px_font(9.2 * z),
             )

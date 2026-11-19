@@ -642,9 +642,10 @@ class MainWindow(tk.Tk):
         self.view.ensure_visible(table.id)
         self._update_counts()
         noun = "component" if table.kind == COMPONENTS else "row"
-        plural = f"{noun}s"
+        count = len(table.rows)
         self.set_status(
-            f"Created table \u201c{table.name}\u201d with {len(table.rows)} {plural}.",
+            f"Created table \u201c{table.name}\u201d with {count} "
+            f"{noun}{'' if count == 1 else 's'}.",
             "success",
             timeout=3500,
         )
@@ -789,11 +790,11 @@ class MainWindow(tk.Tk):
             if row.link_table_id == table_id
         )
         noun = "component" if table.kind == COMPONENTS else "row"
-        plural = f"{noun}s"
+        count = len(table.rows)
         message = (
             f"Delete \u201c{table.name}\u201d?\n\n"
-            f"This removes {len(table.rows)} {plural} and clears {incoming} incoming "
-            "link(s). You can undo this action."
+            f"This removes {count} {noun}{'' if count == 1 else 's'} and clears "
+            f"{incoming} incoming link(s). You can undo this action."
         )
         if not messagebox.askyesno("Delete table", message, parent=self):
             return
